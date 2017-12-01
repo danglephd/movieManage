@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 30, 2017 8:23:28 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="org.vn.movieviewer.dto.MainAct" table="main_act" catalog="movies_db" optimistic-lock="version">
+        <id name="idmainAct" type="java.lang.Integer">
+            <column name="idmain_act" />
+            <generator class="identity" />
+        </id>
+        <property name="name" type="string">
+            <column name="name" not-null="true" />
+        </property>
+        <property name="birthday" type="timestamp">
+            <column name="birthday" length="19" />
+        </property>
+        <property name="gene" type="java.lang.Integer">
+            <column name="gene" />
+        </property>
+        <property name="nickname" type="string">
+            <column name="nickname" />
+        </property>
+    </class>
+</hibernate-mapping>

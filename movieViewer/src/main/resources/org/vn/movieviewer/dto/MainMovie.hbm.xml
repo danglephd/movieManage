@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 30, 2017 8:23:28 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="org.vn.movieviewer.dto.MainMovie" table="main_movie" catalog="movies_db" optimistic-lock="version">
+        <id name="idmainMovie" type="java.lang.Integer">
+            <column name="idmain_movie" />
+            <generator class="identity" />
+        </id>
+        <property name="name" type="string">
+            <column name="name" not-null="true" />
+        </property>
+        <property name="rate" type="java.lang.Float">
+            <column name="rate" precision="12" scale="0" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="createDate" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="updateDate" length="19" />
+        </property>
+        <property name="genres" type="string">
+            <column name="genres" />
+        </property>
+        <property name="posterUrl" type="string">
+            <column name="posterUrl" />
+        </property>
+        <property name="isWatched" type="java.lang.Boolean">
+            <column name="isWatched" />
+        </property>
+        <property name="subtitle" type="java.lang.Boolean">
+            <column name="subtitle" />
+        </property>
+        <property name="releaseYear" type="java.lang.Integer">
+            <column name="releaseYear" />
+        </property>
+    </class>
+</hibernate-mapping>

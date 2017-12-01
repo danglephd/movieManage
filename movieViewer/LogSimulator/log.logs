@@ -1,0 +1,5 @@
+ERROR 2017-11-10 16:37:35,310  [main] dao.daoMainMovie:43 - 
+java.lang.NullPointerException
+	at org.vn.movieviewer.dao.daoMainMovie.get(daoMainMovie.java:39)
+	at org.vn.movieviewer.dao.daoMainMovie.main(daoMainMovie.java:31)
+ERROR 2017-11-10 16:37:35,933  [main] dao.daoMainMovie:44 - 
