@@ -5,7 +5,6 @@
  */
 package org.vn.movieviewer.config;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.vn.movieviewer.dao.daoMainMovie;
@@ -19,7 +18,7 @@ public class PagingTable {
 
     public static int FIRST_PAGE = 1;
 
-    private int pageOffset = 13;
+    private int pageOffset = 25;
     private int totalPage;
     private int curentPage;
     private int start;
@@ -49,11 +48,11 @@ public class PagingTable {
         
             @Override
             public void AddPageToRowCache() {
-                List<MainMovie> mainMovies = daoMainMovie.get(false, "", this.getStart(), this.getLimit());
+                List<MainMovie> mainMovies = daoMainMovie.get(false, "", "", this.getStart(), this.getLimit());
                 this.rowCache.clear();
                 for (Iterator<MainMovie> iterator = mainMovies.iterator(); iterator.hasNext();) {
                     MainMovie next = iterator.next();
-                    this.rowCache.add(next);                    
+                    this.rowCache.add(next);
                 }
             }
         };

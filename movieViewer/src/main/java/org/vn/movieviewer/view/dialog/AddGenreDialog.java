@@ -6,16 +6,12 @@
 package org.vn.movieviewer.view.dialog;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.ListModel;
-import javax.swing.event.ListDataListener;
 import org.vn.movieviewer.config.GlobalVariables;
 import org.vn.movieviewer.dao.daoMainGenre;
 import org.vn.movieviewer.dto.MainGenre;
@@ -30,15 +26,14 @@ public class AddGenreDialog extends javax.swing.JDialog {
     /**
      * Creates new form AddGenreDialog
      */
-    
     private DefaultComboBoxModel allGenreDefaultCBM = null;
     private DefaultComboBoxModel selectedGenreDefaultCBM = null;
-    
+
     public AddGenreDialog(java.awt.Frame parent, boolean modal, Map<Integer, MainGenre> mapGenre, String lstGenreByStr) {
         super(parent, modal);
         initComponents();
         this.setTitle("Cập nhật thể loại");
-        loadGenreFromDb(mapGenre,lstGenreByStr);
+        loadGenreFromDb(mapGenre, lstGenreByStr);
         loadSelectedGenre(lstGenreByStr);
     }
 
@@ -207,15 +202,15 @@ public class AddGenreDialog extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        if(jTFNewGenre.getText().equals("")){
+        if (jTFNewGenre.getText().equals("")) {
             JOptionPane.showMessageDialog(this, "Chưa nhập tên thể loại mới.");
             return;
         }
-        if(daoMainGenre.insert(jTFNewGenre.getText())){
+        if (daoMainGenre.insert(jTFNewGenre.getText())) {
             allGenreDefaultCBM.addElement(jTFNewGenre.getText());
-            JOptionPane.showMessageDialog(this, "Thêm thể loại thành công.");    
-        }else{
-            JOptionPane.showMessageDialog(this, "Thể loại đã có, vui lòng nhập tên khác.");            
+            JOptionPane.showMessageDialog(this, "Thêm thể loại thành công.");
+        } else {
+            JOptionPane.showMessageDialog(this, "Thể loại đã có, vui lòng nhập tên khác.");
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -241,15 +236,15 @@ public class AddGenreDialog extends javax.swing.JDialog {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        NewJFrame parent = (NewJFrame)this.getParent();
+        NewJFrame parent = (NewJFrame) this.getParent();
         String selectedGenresStr = "";
 //        List<String> lstSelectedGenre = 
-        for(int i = 0; i<selectedGenreDefaultCBM.getSize() ;i++){
+        for (int i = 0; i < selectedGenreDefaultCBM.getSize(); i++) {
             selectedGenresStr += selectedGenreDefaultCBM.getElementAt(i) + GlobalVariables.separatorComa;
         }
-        
+
         parent.UpdateSelectedGenresLst(selectedGenresStr);
-        
+
         //close dialog
         this.dispose();
     }//GEN-LAST:event_jButton6ActionPerformed
@@ -313,47 +308,47 @@ public class AddGenreDialog extends javax.swing.JDialog {
     private javax.swing.JTextField jTFNewGenre;
     // End of variables declaration//GEN-END:variables
 
-    private void loadGenreFromDb(Map<Integer, MainGenre> mapGenre, String lstGenreByStr){
+    private void loadGenreFromDb(Map<Integer, MainGenre> mapGenre, String lstGenreByStr) {
         List<String> lstAllgenre = new ArrayList<String>();
-        if(mapGenre == null || mapGenre.size() <= 0){
+        if (mapGenre == null || mapGenre.size() <= 0) {
             allGenreDefaultCBM = new DefaultComboBoxModel();
-            jList1.setModel(allGenreDefaultCBM); 
+            jList1.setModel(allGenreDefaultCBM);
             return;
         }
         for (Map.Entry<Integer, MainGenre> entry : mapGenre.entrySet()) {
             Integer key = entry.getKey();
             MainGenre value = entry.getValue();
-            if(!lstGenreByStr.contains(value.getName())){
+            if (!lstGenreByStr.contains(value.getName())) {
                 lstAllgenre.add(value.getName());
             }
         }
         allGenreDefaultCBM = new DefaultComboBoxModel(lstAllgenre.toArray());
-        jList1.setModel(allGenreDefaultCBM); 
+        jList1.setModel(allGenreDefaultCBM);
     }
 
     private void loadSelectedGenre(String lstGenreByStr) {
         String[] arrayGenre = lstGenreByStr.split(GlobalVariables.separatorComa);
-        if(lstGenreByStr.equals("") || arrayGenre == null || arrayGenre.length <= 0){
+        if (lstGenreByStr.equals("") || arrayGenre == null || arrayGenre.length <= 0) {
             selectedGenreDefaultCBM = new DefaultComboBoxModel();
-            jList2.setModel(selectedGenreDefaultCBM); 
+            jList2.setModel(selectedGenreDefaultCBM);
             return;
         }
         selectedGenreDefaultCBM = new DefaultComboBoxModel(arrayGenre);
-        jList2.setModel(selectedGenreDefaultCBM); 
+        jList2.setModel(selectedGenreDefaultCBM);
     }
 
     private void moveItem(JList<String> jListFrom, DefaultComboBoxModel cbMFrom, DefaultComboBoxModel cbMTo, boolean isMoveAll) {
-        if(isMoveAll){
-            for(int i = 0; i<cbMFrom.getSize() ;i++){
+        if (isMoveAll) {
+            for (int i = 0; i < cbMFrom.getSize(); i++) {
                 cbMTo.addElement(cbMFrom.getElementAt(i));
             }
             cbMFrom.removeAllElements();
-        }else{
+        } else {
             int[] arraySelectedIndexID = jListFrom.getSelectedIndices();
-            if(arraySelectedIndexID.length <= 0){
+            if (arraySelectedIndexID.length <= 0) {
                 return;
             }
-            for (int i = arraySelectedIndexID.length - 1; i >= 0 ; i--) {
+            for (int i = arraySelectedIndexID.length - 1; i >= 0; i--) {
                 cbMTo.addElement(cbMFrom.getElementAt(arraySelectedIndexID[i]));
                 cbMFrom.removeElementAt(arraySelectedIndexID[i]);
             }

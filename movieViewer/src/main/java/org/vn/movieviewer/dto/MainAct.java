@@ -1,12 +1,12 @@
 package org.vn.movieviewer.dto;
-// Generated Nov 30, 2017 8:23:27 AM by Hibernate Tools 4.3.1
+// Generated Dec 1, 2017 10:54:07 AM by Hibernate Tools 4.3.1
 
 
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -17,15 +17,22 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name="main_act"
-    ,catalog="movies_db"
 )
 public class MainAct  implements java.io.Serializable {
 
 
+    @Id
+    @Column(name="idmain_act", unique=true, nullable=false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
      private Integer idmainAct;
+    @Column(name="name", nullable=false)
      private String name;
+@Temporal(TemporalType.TIMESTAMP)
+     @Column(name="birthday", length=19)
      private Date birthday;
+@Column(name="gene")
      private Integer gene;
+@Column(name="nickname")
      private String nickname;
 
     public MainAct() {
@@ -42,10 +49,6 @@ public class MainAct  implements java.io.Serializable {
        this.nickname = nickname;
     }
    
-     @Id @GeneratedValue(strategy=IDENTITY)
-
-    
-    @Column(name="idmain_act", unique=true, nullable=false)
     public Integer getIdmainAct() {
         return this.idmainAct;
     }
@@ -55,7 +58,6 @@ public class MainAct  implements java.io.Serializable {
     }
 
     
-    @Column(name="name", nullable=false)
     public String getName() {
         return this.name;
     }
@@ -64,8 +66,6 @@ public class MainAct  implements java.io.Serializable {
         this.name = name;
     }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="birthday", length=19)
     public Date getBirthday() {
         return this.birthday;
     }
@@ -75,7 +75,6 @@ public class MainAct  implements java.io.Serializable {
     }
 
     
-    @Column(name="gene")
     public Integer getGene() {
         return this.gene;
     }
@@ -85,7 +84,6 @@ public class MainAct  implements java.io.Serializable {
     }
 
     
-    @Column(name="nickname")
     public String getNickname() {
         return this.nickname;
     }

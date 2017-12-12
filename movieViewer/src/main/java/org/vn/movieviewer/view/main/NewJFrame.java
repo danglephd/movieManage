@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -42,6 +43,7 @@ import org.vn.movieviewer.dao.daoMainMovie;
 import org.vn.movieviewer.dto.MainGenre;
 import org.vn.movieviewer.dto.MainMovie;
 import org.vn.movieviewer.view.dialog.AddGenreDialog;
+import org.vn.movieviewer.view.dialog.VoteDialog;
 
 /**
  *
@@ -55,8 +57,10 @@ public class NewJFrame extends javax.swing.JFrame {
     private File[] listOfFiles = null;
     private Map<Integer, MainGenre> mapGenre = null;
     private PagingTable pagingTable;
-//    private String[] genreArray = null;
+    private String[] genreArray = null;
     private int selectedRow = -1;
+    private int[] selectedRows = null;
+//    private StarRater starRater = new StarRater(10);
 
     /**
      * Creates new form NewJFrame
@@ -73,7 +77,7 @@ public class NewJFrame extends javax.swing.JFrame {
         initTableListenner(columnNames);
         loadConfigInfo();
         loadGenreInfo();
-        loadMoviesFromDatabase();
+        loadMoviesFromDatabase("");
         loadNewMovieFromFolder(GlobalVariables.folderReloadPath);
         initFormView();
         setPanelEnabled(jPanel1, false);
@@ -107,6 +111,9 @@ public class NewJFrame extends javax.swing.JFrame {
         jTFYear = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
+        jBtVote = new javax.swing.JButton();
+        starRater1 = new org.vn.movieviewer.config.StarRater();
+        jLRating = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jTFImgUrl = new javax.swing.JTextField();
         jBtUpdate = new javax.swing.JButton();
@@ -123,6 +130,7 @@ public class NewJFrame extends javax.swing.JFrame {
         jScrollPane6 = new javax.swing.JScrollPane();
         jTPGenres2 = new javax.swing.JTextPane();
         jBtAddGenre2 = new javax.swing.JButton();
+        jBtUpdate1 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jTFCurrentPage = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
@@ -132,6 +140,11 @@ public class NewJFrame extends javax.swing.JFrame {
         jButton5 = new javax.swing.JButton();
         jLTotalPages = new javax.swing.JLabel();
         jLDataFrom = new javax.swing.JLabel();
+        jButton6 = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel13 = new javax.swing.JLabel();
+        jCBGenre = new javax.swing.JComboBox<>();
+        jButton7 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMIExit = new javax.swing.JMenuItem();
@@ -157,6 +170,7 @@ public class NewJFrame extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTableMovies);
 
         jPanel1.setEnabled(false);
+        jPanel1.setPreferredSize(new java.awt.Dimension(500, 578));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -186,17 +200,41 @@ public class NewJFrame extends javax.swing.JFrame {
         jLabel8.setText("Năm phát hành");
 
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel9.setText("Đánh giá");
+        jLabel9.setText("Điểm số");
+
+        jBtVote.setText("Đánh giá");
+        jBtVote.setEnabled(false);
+        jBtVote.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtVoteActionPerformed(evt);
+            }
+        });
+
+        starRater1.setEnabled(false);
+
+        jLRating.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(starRater1, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                    .addComponent(jLRating, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jBtVote))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 38, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jBtVote)
+                .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(starRater1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLRating, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -254,6 +292,14 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
+        jBtUpdate1.setText("Bỏ qua");
+        jBtUpdate1.setEnabled(false);
+        jBtUpdate1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtUpdate1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -283,7 +329,7 @@ public class NewJFrame extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGap(6, 6, 6)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jCBSubtitle, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jCBSubtitle, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
                                     .addComponent(jCBWatched, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -298,7 +344,6 @@ public class NewJFrame extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jBtAddGenre, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jBtUpdate, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jBtAddGenre1, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jBtAddGenre2, javax.swing.GroupLayout.Alignment.TRAILING)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -308,7 +353,11 @@ public class NewJFrame extends javax.swing.JFrame {
                         .addGap(6, 6, 6)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jTFImgUrl))))
+                            .addComponent(jTFImgUrl)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jBtUpdate1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jBtUpdate)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -365,9 +414,11 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jBtUpdate))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jBtUpdate)
+                    .addComponent(jBtUpdate1)))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -416,6 +467,13 @@ public class NewJFrame extends javax.swing.JFrame {
         jLDataFrom.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLDataFrom.setText("Dữ liệu từ");
 
+        jButton6.setText("Cập nhật");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -435,8 +493,10 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addComponent(jButton4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLDataFrom, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLDataFrom, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -451,7 +511,42 @@ public class NewJFrame extends javax.swing.JFrame {
                     .addComponent(jButton4)
                     .addComponent(jButton5)
                     .addComponent(jLTotalPages, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLDataFrom, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLDataFrom, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton6)))
+        );
+
+        jLabel13.setText("Thể loại");
+
+        jCBGenre.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jButton7.setText("Tìm");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel13)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCBGenre, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton7)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(jCBGenre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton7))
+                .addGap(0, 33, Short.MAX_VALUE))
         );
 
         jMenu1.setText("File");
@@ -505,9 +600,10 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -517,6 +613,8 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(20, 20, 20))
             .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -548,40 +646,73 @@ public class NewJFrame extends javax.swing.JFrame {
         frm.setLocationRelativeTo(null);
         frm.setVisible(true);
 
-        loadMoviesFromDatabase();
+        loadMoviesFromDatabase("");
     }//GEN-LAST:event_jMINewMoviesActionPerformed
 
     private void jBtUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtUpdateActionPerformed
-        // TODO add your handling code here:        
-        MainMovie movieSelected = (MainMovie) pagingTable.getByRow(selectedRow);
-        movieSelected.setName(jTFMovieName.getText());
-        if (mapGenre != null && mapGenre.size() > 0) {
-            String[] selectedGenres = jTPGenres.getText().equals("") ? null : jTPGenres.getText().split(GlobalVariables.separatorComa);
-            String selectedIdGenresByStr = "";
-            if (selectedGenres != null) {
+        // TODO add your handling code here:    
+        if (selectedRows == null) {
+            MainMovie movieSelected = (MainMovie) pagingTable.getByRow(selectedRow);
+            movieSelected.setName(jTFMovieName.getText());
+            if (mapGenre != null && mapGenre.size() > 0) {
+                String selectedIdGenresByStr = jTPGenres.getText();
+//                String[] selectedGenres = jTPGenres.getText().equals("") ? null : jTPGenres.getText().split(GlobalVariables.separatorComa);
+//                if (selectedGenres != null) {
+//
+//                    for (int i = 0; i < selectedGenres.length; i++) {
+//                        String nameGenre = selectedGenres[i];
+//                        MainGenre mainGenre = daoMainGenre.getByName(nameGenre);
+//                        selectedIdGenresByStr += mainGenre.getIdmainGenre() + GlobalVariables.separatorComa;
+//                    }
+//                }
 
-                for (int i = 0; i < selectedGenres.length; i++) {
-                    String nameGenre = selectedGenres[i];
-                    MainGenre mainGenre = daoMainGenre.getByName(nameGenre);
-                    selectedIdGenresByStr += mainGenre.getIdmainGenre() + GlobalVariables.separatorComa;
-                }
+                movieSelected.setGenres(selectedIdGenresByStr);
             }
-
-            movieSelected.setGenres(selectedIdGenresByStr);
+            movieSelected.setSubtitle(jCBSubtitle.isSelected());
+            if (!jTFYear.getText().equals("")) {
+                movieSelected.setReleaseYear(Integer.parseInt(jTFYear.getText()));
+            }
+            movieSelected.setIsWatched(jCBWatched.isSelected());
+//        movieSelected.setIvote();//Rate(Float.parseFloat(starRater1.getSelection() + ""));
+            movieSelected.setPosterUrl(jTFImgUrl.getText());
+            daoMainMovie.update(movieSelected);
+        } else {
+            //Update multi rows
+            List<MainMovie> selectedMovies = new ArrayList<>();
+            for (int i = 0; i < selectedRows.length; i++) {
+                int t = selectedRows[i];
+                selectedMovies.add((MainMovie)this.pagingTable.getByRow(t));
+            }
+            String conditions = "";
+            Map<String, Object> params = new HashMap<String, Object>();
+            
+            if(jCBSubtitle.isEnabled()){
+                conditions = putConditions(conditions, " subtitle = :subtitle ");
+                params.put("subtitle", jCBSubtitle.isSelected());
+            }
+            
+            if(jCBWatched.isEnabled()){
+                conditions = putConditions(conditions, " isWatched = :isWatched ");
+                params.put("isWatched", jCBWatched.isSelected());
+            }
+            
+            daoMainMovie.update(selectedMovies, conditions, params);
         }
-        movieSelected.setSubtitle(jCBSubtitle.isSelected());
-        if (!jTFYear.getText().equals("")) {
-            movieSelected.setReleaseYear(Integer.parseInt(jTFYear.getText()));
-        }
-        movieSelected.setIsWatched(jCBWatched.isSelected());
-        movieSelected.setRate(Float.parseFloat(starRater.getSelection() + ""));
-        movieSelected.setPosterUrl(jTFImgUrl.getText());
-        daoMainMovie.update(movieSelected);
+        pagingTable.AddPageToRowCache();
         initTableDataType(pagingTable.getRowCache(), pagingTable.getStart());
         setPanelEnabled(jPanel1, false);
         setPanelEnabled(jPanel3, true);
     }//GEN-LAST:event_jBtUpdateActionPerformed
 
+    private String putConditions(String condition, String strToPut){
+        if(!condition.equals("")){
+            condition += " , " + strToPut;
+        }else{
+            condition += strToPut;
+        }
+        return condition;
+    }
+    
     private void jBtAddGenreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtAddGenreActionPerformed
         // TODO add your handling code here:
 //        MainMovie movieSelected = lstImportMovies.get(selectedRow);
@@ -637,6 +768,42 @@ public class NewJFrame extends javax.swing.JFrame {
         initTableDataType(this.pagingTable.getRowCache(), this.pagingTable.getStart());
         updatePagingView();
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jBtUpdate1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtUpdate1ActionPerformed
+        // TODO add your handling code here:
+        setPanelEnabled(jPanel1, false);
+        setPanelEnabled(jPanel3, true);
+    }//GEN-LAST:event_jBtUpdate1ActionPerformed
+
+    private void jBtVoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtVoteActionPerformed
+        // TODO add your handling code here:
+        VoteDialog frm = new VoteDialog(this, true);
+        frm.setLocationRelativeTo(null);
+        frm.setVisible(true);
+    }//GEN-LAST:event_jBtVoteActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+        selectedRows = jTableMovies.getSelectedRows();
+        if (selectedRows.length > 0) {
+//            for (int i = 0; i < selectedRows.length; i++) {
+//                int t = selectedRows[i];
+//                System.out.println(">>" + t);
+//            }
+//            MainMovie movieSelected = (MainMovie) pagingTable.getByRow(selectedRow);
+            viewMoviesInfo();
+        }
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+        String selectedGenre = (String)jCBGenre.getSelectedItem();
+        if(selectedGenre.equals("Tất cả")){
+            loadMoviesFromDatabase("");
+        }else{
+//            loadMoviesFromDatabase(" where genres ");
+        }
+    }//GEN-LAST:event_jButton7ActionPerformed
 
     private void loadNewMovieFromFolder(String filePath) {
         File folder = new File(filePath);
@@ -738,6 +905,9 @@ public class NewJFrame extends javax.swing.JFrame {
         this.jTableMovies.setModel(tableModelMovies);
         this.jTableMovies.setRowHeight(30);
 
+        TableColumn column4 = this.jTableMovies.getColumnModel().getColumn(4);
+        column4.setMinWidth(100);
+
         TableColumn column1 = this.jTableMovies.getColumnModel().getColumn(1);
         column1.setMinWidth(300);
         column1.setCellRenderer(new DefaultTableCellRenderer() {
@@ -781,6 +951,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 if (me.getClickCount() == 2) {
 //                    lstImportMovies.
                     selectedRow = rowAfterSorted;
+                    selectedRows = null;
                     MainMovie movieSelected = (MainMovie) pagingTable.getByRow(selectedRow);
                     viewMovieInfo(movieSelected);
                 }
@@ -792,32 +963,45 @@ public class NewJFrame extends javax.swing.JFrame {
         });
     }
 
-    private void viewMovieInfo(MainMovie movieInfo) {
+    private void viewMoviesInfo() {
+        setPanelEnabled(jPanel1, true);
+        setPanelEnabled(jPanel3, false);
 
+        jTFMovieName.setText("");
+        jTFMovieName.setEnabled(false);
+        String selectedIdGenre = "";
+        jTPGenres.setText(selectedIdGenre);
+        jBtAddGenre.setEnabled(false);
+        jTFImgUrl.setText("");
+        jTFImgUrl.setEnabled(false);
+        updateRatingLabel(0, 0);
+        jBtVote.setEnabled(false);
+
+        jCBSubtitle.setSelected(false);
+        jCBWatched.setSelected(false);
+        jTFYear.setText("");
+        jTFYear.setEnabled(false);
+    }
+
+    private void viewMovieInfo(MainMovie movieInfo) {
 //        StarRater starRater = new StarRater(10);
         jTFMovieName.setText(movieInfo.getName());
         String selectedIdGenre = "";
         if (movieInfo.getGenres() != null && !movieInfo.getGenres().equals("")) {
-            String[] arrayIdGenre = movieInfo.getGenres().split(GlobalVariables.separatorComa);
-//            List<String> lstGenre = new ArrayList<>();
-//            int[] selectedIndex = new int[arrayIdGenre.length];
-//            int j = 0;
-            for (int i = 0; i < arrayIdGenre.length; i++) {
-                if (mapGenre.get(Integer.parseInt(arrayIdGenre[i])) != null) {
-                    selectedIdGenre += mapGenre.get(Integer.parseInt(arrayIdGenre[i])).getName() + GlobalVariables.separatorComa;
-                }
-            }
-//            for (int i = 0; i < genreArray.length; i++) {
-//                if (lstGenre.contains(genreArray[i])) {
-//                    selectedIndex[j++] = i;
+//            String[] arrayIdGenre = movieInfo.getGenres().split(GlobalVariables.separatorComa);
+//            for (int i = 0; i < arrayIdGenre.length; i++) {
+//                if (mapGenre.get(Integer.parseInt(arrayIdGenre[i])) != null) {
+//                    selectedIdGenre += mapGenre.get(Integer.parseInt(arrayIdGenre[i])).getName() + GlobalVariables.separatorComa;
 //                }
 //            }
-//            jTPGenres.setText(selectedIndex);
+            selectedIdGenre = movieInfo.getGenres();
         }
         jTPGenres.setText(selectedIdGenre);
         jTFImgUrl.setText(movieInfo.getPosterUrl());
-        starRater.setRating(movieInfo.getRate() != null ? movieInfo.getRate() : 0);
-        starRater.setSelection(movieInfo.getRate() != null ? movieInfo.getRate().intValue() : 0);
+        Integer numVote = movieInfo.getIvote() != null ? movieInfo.getIvote() : 0;
+        Integer totalScore = movieInfo.getItotalScore() != null ? movieInfo.getItotalScore() : 0;
+        updateRatingLabel(numVote, totalScore);
+
         jCBSubtitle.setSelected(movieInfo.getSubtitle() != null && movieInfo.getSubtitle());
         jCBWatched.setSelected(movieInfo.getIsWatched() != null && movieInfo.getIsWatched());
         jTFYear.setText(movieInfo.getReleaseYear() != null ? movieInfo.getReleaseYear() + "" : "");
@@ -841,24 +1025,33 @@ public class NewJFrame extends javax.swing.JFrame {
 //                });
 //                starRater.setBounds(0, 0, 150, 20);
 //            String[] arrayIdGenreByStr = null;
+            Double rating = 0.0d;
+
             for (int i = 0; i < moviesList.size(); i++) {
+                rating = 0.0d;
                 moviesData = new Object[this.tableModelMovies.getColumnCount()];
 //                StarRater starRater = new StarRater(10, moviesList.get(i).getStart() != null ? moviesList.get(i).getStart() : 0);
 //                starRater.setBounds(0, 0, 180, 20);
                 MainMovie mainMovie = (MainMovie) moviesList.get(i);
-                String[] arrayIdGenreById = (mainMovie.getGenres() == null || mainMovie.getGenres().equals("")) ? null : mainMovie.getGenres().split(GlobalVariables.separatorComa);
+//                String[] arrayIdGenreById = (mainMovie.getGenres() == null || mainMovie.getGenres().equals("")) ? null : mainMovie.getGenres().split(GlobalVariables.separatorComa);
 //                arrayIdGenreByStr = != null && mapGenre != null && mapGenre.containsKey(mainMovie.getIdgenre()) ? mainMovie.getIdgenre() : -1;
                 moviesData[0] = i + start + 1;
                 moviesData[1] = mainMovie.getName();
-                moviesData[2] = mainMovie.getRate() != null ? mainMovie.getRate() : 0;
-                if (arrayIdGenreById != null && arrayIdGenreById.length > 0
-                        && mapGenre != null && mapGenre.size() > 0) {
-                    String stringGenres = "";
-                    for (int j = 0; j < arrayIdGenreById.length; j++) {
-                        stringGenres += mapGenre.get(Integer.parseInt(arrayIdGenreById[j])).getName() + GlobalVariables.separatorComa;
-                    }
-                    moviesData[3] = stringGenres;
+                if (mainMovie.getItotalScore() != null && mainMovie.getIvote() != null
+                        && mainMovie.getItotalScore() > 0 && mainMovie.getIvote() > 0) {
+                    rating = mainMovie.getItotalScore().doubleValue() / mainMovie.getIvote().doubleValue();
                 }
+
+                moviesData[2] = GlobalVariables.df.format(rating);
+//                if (arrayIdGenreById != null && arrayIdGenreById.length > 0
+//                        && mapGenre != null && mapGenre.size() > 0) {
+//                    String stringGenres = "";
+//                    for (int j = 0; j < arrayIdGenreById.length; j++) {
+//                        stringGenres += mapGenre.get(Integer.parseInt(arrayIdGenreById[j])).getName() + GlobalVariables.separatorComa;
+//                    }
+//                    moviesData[3] = stringGenres;
+//                }
+                moviesData[3] = mainMovie.getGenres();
                 moviesData[4] = mainMovie.getCreateDate() != null ? mainMovie.getCreateDate() : "";
                 moviesData[5] = mainMovie.getSubtitle() == null || !mainMovie.getSubtitle() ? "Không có" : "Có";
                 moviesData[6] = mainMovie.getIsWatched() == null || !mainMovie.getIsWatched() ? "Chưa xem" : "Đã xem";
@@ -920,19 +1113,26 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JButton jBtAddGenre1;
     private javax.swing.JButton jBtAddGenre2;
     private javax.swing.JButton jBtUpdate;
+    private javax.swing.JButton jBtUpdate1;
+    private javax.swing.JButton jBtVote;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JComboBox<String> jCBGenre;
     private javax.swing.JCheckBox jCBSubtitle;
     private javax.swing.JCheckBox jCBWatched;
     private javax.swing.JLabel jLDataFrom;
+    private javax.swing.JLabel jLRating;
     private javax.swing.JLabel jLTotalPages;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -950,6 +1150,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
@@ -965,18 +1166,19 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JTextPane jTPGenres2;
     private javax.swing.JTable jTableMovies;
     private javax.swing.JTextPane jTextPane1;
+    private org.vn.movieviewer.config.StarRater starRater1;
     // End of variables declaration//GEN-END:variables
 
-    private void loadMoviesFromDatabase() {
+    private void loadMoviesFromDatabase(String conditions) {
         //load list Movies
-        String sortStr = "rate DESC";
+        String sortStr = "genres ASC";
         this.pagingTable = null;
         this.pagingTable = new PagingTable(daoMainMovie.getIDList()) {//new ArrayList<Integer>()
 //        this.pagingTable = new PagingTable(null) {//new ArrayList<Integer>()
 
             @Override
             public void AddPageToRowCache() {
-                List<MainMovie> mainMovies = daoMainMovie.get(true, sortStr, this.getStart(), this.getPageOffset());
+                List<MainMovie> mainMovies = daoMainMovie.get(true, conditions, sortStr, this.getStart(), this.getPageOffset());
                 if (this.rowCache != null) {
                     this.rowCache.clear();
                 } else {
@@ -1008,13 +1210,11 @@ public class NewJFrame extends javax.swing.JFrame {
         }
     }
 
-    private StarRater starRater = new StarRater(10);
-
     private void exampleStar() {
-        starRater.setBounds(0, 0, 200, 20);
-        starRater.setEnabled(false);
-        jPanel2.add(starRater);
-        jPanel2.updateUI();
+//        starRater.setBounds(0, 0, 200, 20);
+//        starRater.setEnabled(false);
+//        jPanel2.add(starRater);
+//        jPanel2.updateUI();
 //        this.getContentPane().add(panel);
 //        this.pack();
 //        this.setVisible(true);
@@ -1031,8 +1231,9 @@ public class NewJFrame extends javax.swing.JFrame {
         if (mapGenre != null) {
             mapGenre.clear();
         }
-//        genreArray = new String[lstGenre.size()];
+        genreArray = new String[lstGenre.size() + 1];
         int i = 0;
+        genreArray[i++] = "Tất cả";
 
 //        String stringGenres = "";
 //        for (int j = 0; j < arrayIdGenreById.length; j++) {
@@ -1047,10 +1248,10 @@ public class NewJFrame extends javax.swing.JFrame {
                 mapGenre.put(next.getIdmainGenre(), next);
             }
 //            stringGenres += next.getName() + GlobalVariables.separatorComa;
-//            genreArray[i++] = next.getName();
+            genreArray[i++] = next.getName();
         }
 //        jTPGenres.setText(stringGenres);
-//        jCBGenre.setModel(new DefaultComboBoxModel(genreArray));
+        jCBGenre.setModel(new DefaultComboBoxModel(genreArray));
     }
 
     public void UpdateSelectedGenresLst(String selectedGenresStr) {
@@ -1069,6 +1270,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
             components[i].setEnabled(isEnabled);
         }
+        starRater1.setEnabled(false);
     }
 
     private void initFormView() {
@@ -1093,6 +1295,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 return false;
             }
         });
+//        starRater1.set
     }
 
     private void updatePagingView() {
@@ -1102,6 +1305,29 @@ public class NewJFrame extends javax.swing.JFrame {
             jLDataFrom.setText("Không có dữ liệu");
         } else {
             jLDataFrom.setText("Dữ liệu từ " + (this.pagingTable.getStart() + 1) + " đến " + this.pagingTable.getLimit());
+        }
+    }
+
+    public void votefortheMovie(int score) {
+        MainMovie movieSelected = (MainMovie) pagingTable.getByRow(selectedRow);
+        Integer numVote = movieSelected.getIvote() != null ? movieSelected.getIvote() : 0;
+        numVote++;
+        movieSelected.setIvote(numVote);
+        Integer totalScore = movieSelected.getItotalScore() != null ? movieSelected.getItotalScore() : 0;
+        totalScore += score;
+        movieSelected.setItotalScore(totalScore);
+        updateRatingLabel(numVote, totalScore);
+    }
+
+    private void updateRatingLabel(Integer numVote, Integer totalScore) {
+        if (numVote == 0) {
+            starRater1.setRating(0);
+            jLRating.setText("0.0 | Votes: 0");
+        } else {
+            Float rating = totalScore.floatValue() / numVote.floatValue();
+
+            starRater1.setRating(rating);
+            jLRating.setText(GlobalVariables.df.format(rating) + " | Votes: " + numVote);
         }
     }
 }

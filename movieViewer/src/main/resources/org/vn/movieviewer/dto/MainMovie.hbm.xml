@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Nov 30, 2017 8:23:28 AM by Hibernate Tools 4.3.1 -->
+<!-- Generated Dec 1, 2017 10:54:07 AM by Hibernate Tools 4.3.1 -->
 <hibernate-mapping>
     <class name="org.vn.movieviewer.dto.MainMovie" table="main_movie" catalog="movies_db" optimistic-lock="version">
         <id name="idmainMovie" type="java.lang.Integer">
@@ -11,8 +11,8 @@
         <property name="name" type="string">
             <column name="name" not-null="true" />
         </property>
-        <property name="rate" type="java.lang.Float">
-            <column name="rate" precision="12" scale="0" />
+        <property name="ivote" type="java.lang.Integer">
+            <column name="ivote" />
         </property>
         <property name="createDate" type="timestamp">
             <column name="createDate" length="19" />
@@ -34,6 +34,9 @@
         </property>
         <property name="releaseYear" type="java.lang.Integer">
             <column name="releaseYear" />
+        </property>
+        <property name="itotalScore" type="java.lang.Integer">
+            <column name="itotalScore" />
         </property>
     </class>
 </hibernate-mapping>

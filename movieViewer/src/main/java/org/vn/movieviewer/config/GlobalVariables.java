@@ -5,6 +5,7 @@
  */
 package org.vn.movieviewer.config;
 
+import java.text.DecimalFormat;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 
@@ -21,4 +22,6 @@ public class GlobalVariables {
     public static final String separatorSemicolon = ";";
     public static final String separatorSlash = "/";
     public static final String separatorOr = "|";
+    
+    public static DecimalFormat df = new DecimalFormat("#.#");
 }

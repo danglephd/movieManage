@@ -1,12 +1,12 @@
 package org.vn.movieviewer.dto;
-// Generated Nov 30, 2017 8:23:27 AM by Hibernate Tools 4.3.1
+// Generated Dec 1, 2017 10:54:07 AM by Hibernate Tools 4.3.1
 
 
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -17,21 +17,36 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name="main_movie"
-    ,catalog="movies_db"
 )
 public class MainMovie  implements java.io.Serializable {
 
 
+    @Id
+    @Column(name="idmain_movie", unique=true, nullable=false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
      private Integer idmainMovie;
+    @Column(name="name", nullable=false)
      private String name;
-     private Float rate;
+@Column(name="ivote")
+     private Integer ivote;
+@Temporal(TemporalType.TIMESTAMP)
+     @Column(name="createDate", length=19)
      private Date createDate;
+@Temporal(TemporalType.TIMESTAMP)
+     @Column(name="updateDate", length=19)
      private Date updateDate;
+@Column(name="genres")
      private String genres;
+@Column(name="posterUrl")
      private String posterUrl;
+@Column(name="isWatched")
      private Boolean isWatched;
+@Column(name="subtitle")
      private Boolean subtitle;
+@Column(name="releaseYear")
      private Integer releaseYear;
+@Column(name="itotalScore")
+     private Integer itotalScore;
 
     public MainMovie() {
     }
@@ -40,9 +55,9 @@ public class MainMovie  implements java.io.Serializable {
     public MainMovie(String name) {
         this.name = name;
     }
-    public MainMovie(String name, Float rate, Date createDate, Date updateDate, String genres, String posterUrl, Boolean isWatched, Boolean subtitle, Integer releaseYear) {
+    public MainMovie(String name, Integer ivote, Date createDate, Date updateDate, String genres, String posterUrl, Boolean isWatched, Boolean subtitle, Integer releaseYear, Integer itotalScore) {
        this.name = name;
-       this.rate = rate;
+       this.ivote = ivote;
        this.createDate = createDate;
        this.updateDate = updateDate;
        this.genres = genres;
@@ -50,12 +65,9 @@ public class MainMovie  implements java.io.Serializable {
        this.isWatched = isWatched;
        this.subtitle = subtitle;
        this.releaseYear = releaseYear;
+       this.itotalScore = itotalScore;
     }
    
-     @Id @GeneratedValue(strategy=IDENTITY)
-
-    
-    @Column(name="idmain_movie", unique=true, nullable=false)
     public Integer getIdmainMovie() {
         return this.idmainMovie;
     }
@@ -65,7 +77,6 @@ public class MainMovie  implements java.io.Serializable {
     }
 
     
-    @Column(name="name", nullable=false)
     public String getName() {
         return this.name;
     }
@@ -75,17 +86,14 @@ public class MainMovie  implements java.io.Serializable {
     }
 
     
-    @Column(name="rate", precision=12, scale=0)
-    public Float getRate() {
-        return this.rate;
+    public Integer getIvote() {
+        return this.ivote;
     }
     
-    public void setRate(Float rate) {
-        this.rate = rate;
+    public void setIvote(Integer ivote) {
+        this.ivote = ivote;
     }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="createDate", length=19)
     public Date getCreateDate() {
         return this.createDate;
     }
@@ -94,8 +102,6 @@ public class MainMovie  implements java.io.Serializable {
         this.createDate = createDate;
     }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="updateDate", length=19)
     public Date getUpdateDate() {
         return this.updateDate;
     }
@@ -105,7 +111,6 @@ public class MainMovie  implements java.io.Serializable {
     }
 
     
-    @Column(name="genres")
     public String getGenres() {
         return this.genres;
     }
@@ -115,7 +120,6 @@ public class MainMovie  implements java.io.Serializable {
     }
 
     
-    @Column(name="posterUrl")
     public String getPosterUrl() {
         return this.posterUrl;
     }
@@ -125,7 +129,6 @@ public class MainMovie  implements java.io.Serializable {
     }
 
     
-    @Column(name="isWatched")
     public Boolean getIsWatched() {
         return this.isWatched;
     }
@@ -135,7 +138,6 @@ public class MainMovie  implements java.io.Serializable {
     }
 
     
-    @Column(name="subtitle")
     public Boolean getSubtitle() {
         return this.subtitle;
     }
@@ -145,13 +147,21 @@ public class MainMovie  implements java.io.Serializable {
     }
 
     
-    @Column(name="releaseYear")
     public Integer getReleaseYear() {
         return this.releaseYear;
     }
     
     public void setReleaseYear(Integer releaseYear) {
         this.releaseYear = releaseYear;
+    }
+
+    
+    public Integer getItotalScore() {
+        return this.itotalScore;
+    }
+    
+    public void setItotalScore(Integer itotalScore) {
+        this.itotalScore = itotalScore;
     }
 
 

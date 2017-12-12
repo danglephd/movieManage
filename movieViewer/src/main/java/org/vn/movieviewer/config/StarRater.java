@@ -59,7 +59,7 @@ public class StarRater extends JPanel {
    * The constructor.
    */
   public StarRater() {
-    this(5);
+    this(10);
   }
   
   /**
