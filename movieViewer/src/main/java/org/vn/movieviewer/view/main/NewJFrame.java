@@ -1366,7 +1366,7 @@ public class NewJFrame extends javax.swing.JFrame {
         if (this.pagingTable.getTotalPage() == 0) {
             jLDataFrom.setText("Không có dữ liệu");
         } else {
-            jLDataFrom.setText("Dữ liệu từ " + (this.pagingTable.getStart() + 1) + " đến " + this.pagingTable.getLimit());
+            jLDataFrom.setText("Dữ liệu từ " + (this.pagingTable.getStart() + 1) + " - " + this.pagingTable.getLimit() + "/" + this.pagingTable.getTotalRow());
         }
     }
 
