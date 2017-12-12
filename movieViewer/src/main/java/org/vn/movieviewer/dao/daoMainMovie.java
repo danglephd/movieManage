@@ -102,13 +102,13 @@ public class daoMainMovie {
         return result;
     }
 
-    public static synchronized List<Integer> getIDList() {
+    public static synchronized List<Integer> getIDList(String conditions) {
         List<Integer> result = null;
         sf = HibernateUtil.getSessionFactory();
         Session s = null;
         try {
             s = sf.openSession();
-            String squery = "SELECT m.idmainMovie FROM MainMovie m";
+            String squery = "SELECT idmainMovie FROM MainMovie " + conditions;
             result = s.createQuery(squery).list();
             s.close();
         } catch (Exception e) {

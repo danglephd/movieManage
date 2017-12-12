@@ -60,6 +60,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private String[] genreArray = null;
     private int selectedRow = -1;
     private int[] selectedRows = null;
+    boolean isUpdateGenres = false;
 //    private StarRater starRater = new StarRater(10);
 
     /**
@@ -145,6 +146,8 @@ public class NewJFrame extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         jCBGenre = new javax.swing.JComboBox<>();
         jButton7 = new javax.swing.JButton();
+        jTFMovieNameSearch = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMIExit = new javax.swing.JMenuItem();
@@ -267,8 +270,18 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jCBSubtitle.setText("Tiếng Việt");
         jCBSubtitle.setEnabled(false);
+        jCBSubtitle.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jCBSubtitleMouseClicked(evt);
+            }
+        });
 
         jCBWatched.setEnabled(false);
+        jCBWatched.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jCBWatchedMouseClicked(evt);
+            }
+        });
 
         jTPGenres1.setEditable(false);
         jScrollPane5.setViewportView(jTPGenres1);
@@ -515,6 +528,7 @@ public class NewJFrame extends javax.swing.JFrame {
                     .addComponent(jButton6)))
         );
 
+        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel13.setText("Thể loại");
 
         jCBGenre.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -526,16 +540,23 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
+        jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel14.setText("Tên phim");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel13)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCBGenre, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jCBGenre, 0, 155, Short.MAX_VALUE)
+                    .addComponent(jTFMovieNameSearch))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton7)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -544,9 +565,13 @@ public class NewJFrame extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel13)
-                    .addComponent(jCBGenre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCBGenre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTFMovieNameSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton7))
-                .addGap(0, 33, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jMenu1.setText("File");
@@ -696,6 +721,11 @@ public class NewJFrame extends javax.swing.JFrame {
                 params.put("isWatched", jCBWatched.isSelected());
             }
             
+            if(isUpdateGenres){
+                conditions = putConditions(conditions, " genres = :genres ");
+                params.put("genres", jTPGenres.getText());
+            }
+            
             daoMainMovie.update(selectedMovies, conditions, params);
         }
         pagingTable.AddPageToRowCache();
@@ -798,12 +828,37 @@ public class NewJFrame extends javax.swing.JFrame {
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
         String selectedGenre = (String)jCBGenre.getSelectedItem();
-        if(selectedGenre.equals("Tất cả")){
-            loadMoviesFromDatabase("");
-        }else{
-//            loadMoviesFromDatabase(" where genres ");
+        String movieNameSearch = jTFMovieNameSearch.getText();
+        String conditions = "";
+        
+        if(!selectedGenre.equals("Tất cả")){
+            conditions = " where genres like '%" + selectedGenre + "%'";
         }
+        
+        if(!movieNameSearch.equals("")){
+            if(conditions.equals("")){
+                conditions += " where name like '%" + movieNameSearch + "%'";
+            }else{
+                conditions += " and name like '%" + movieNameSearch + "%'";
+            }
+        }
+        
+        loadMoviesFromDatabase(conditions);
     }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jCBSubtitleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCBSubtitleMouseClicked
+        // TODO add your handling code here:
+        if(!jCBSubtitle.isEnabled() && jPanel1.isEnabled()){
+            jCBSubtitle.setEnabled(true);
+        }
+    }//GEN-LAST:event_jCBSubtitleMouseClicked
+
+    private void jCBWatchedMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCBWatchedMouseClicked
+        // TODO add your handling code here:
+        if(!jCBWatched.isEnabled() && jPanel1.isEnabled()){
+            jCBWatched.setEnabled(true);
+        }
+    }//GEN-LAST:event_jCBWatchedMouseClicked
 
     private void loadNewMovieFromFolder(String filePath) {
         File folder = new File(filePath);
@@ -966,17 +1021,21 @@ public class NewJFrame extends javax.swing.JFrame {
     private void viewMoviesInfo() {
         setPanelEnabled(jPanel1, true);
         setPanelEnabled(jPanel3, false);
+        
+        jCBSubtitle.setEnabled(false);
+        jCBWatched.setEnabled(false);
 
         jTFMovieName.setText("");
         jTFMovieName.setEnabled(false);
         String selectedIdGenre = "";
         jTPGenres.setText(selectedIdGenre);
-        jBtAddGenre.setEnabled(false);
+//        jBtAddGenre.setEnabled(false);
         jTFImgUrl.setText("");
         jTFImgUrl.setEnabled(false);
         updateRatingLabel(0, 0);
         jBtVote.setEnabled(false);
 
+        isUpdateGenres = false;//để cập nhật Genres
         jCBSubtitle.setSelected(false);
         jCBWatched.setSelected(false);
         jTFYear.setText("");
@@ -1133,6 +1192,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1160,6 +1220,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JTextField jTFImgUrl;
     private javax.swing.JTextField jTFMovieName;
     private javax.swing.JTextField jTFMovieName2;
+    private javax.swing.JTextField jTFMovieNameSearch;
     private javax.swing.JTextField jTFYear;
     private javax.swing.JTextPane jTPGenres;
     private javax.swing.JTextPane jTPGenres1;
@@ -1173,7 +1234,7 @@ public class NewJFrame extends javax.swing.JFrame {
         //load list Movies
         String sortStr = "genres ASC";
         this.pagingTable = null;
-        this.pagingTable = new PagingTable(daoMainMovie.getIDList()) {//new ArrayList<Integer>()
+        this.pagingTable = new PagingTable(daoMainMovie.getIDList(conditions)) {//new ArrayList<Integer>()
 //        this.pagingTable = new PagingTable(null) {//new ArrayList<Integer>()
 
             @Override
@@ -1256,6 +1317,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
     public void UpdateSelectedGenresLst(String selectedGenresStr) {
         jTPGenres.setText(selectedGenresStr);
+        isUpdateGenres = true;
     }
 
     private void setPanelEnabled(JPanel panel, Boolean isEnabled) {

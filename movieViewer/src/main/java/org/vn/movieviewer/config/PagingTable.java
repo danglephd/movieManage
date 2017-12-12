@@ -44,7 +44,7 @@ public class PagingTable {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
 
-        PagingTable pagingTable = new PagingTable(daoMainMovie.getIDList()) {//new ArrayList<Integer>()
+        PagingTable pagingTable = new PagingTable(daoMainMovie.getIDList("")) {//new ArrayList<Integer>()
         
             @Override
             public void AddPageToRowCache() {
