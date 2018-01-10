@@ -11,14 +11,16 @@ import java.io.IOException;
 import java.util.Properties;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import org.vn.movieviewer.renderer.PagingTable;
 
 /**
  *
  * @author danglph
  */
-public class Untils {
+public class Utils {
     public static Properties loadPropertiesFile(String path) {
         try {
             //CreatePropertiesFile();
@@ -61,5 +63,16 @@ public class Untils {
             return false;
         }
     };
+    
+    public static void updatePagingView(PagingTable pagingTable, JLabel jLTotalPages, JLabel jLDataFrom, JTextField jTFCurrentPage) {
+        jLTotalPages.setText("/" + pagingTable.getTotalPage());
+        jTFCurrentPage.setText(pagingTable.getCurentPage() + "");
+        if (pagingTable.getTotalPage() == 0) {
+            jLDataFrom.setText("Không có dữ liệu");
+        } else {
+            jLDataFrom.setText("Dữ liệu từ " + (pagingTable.getStart() + 1) + " - " + pagingTable.getLimit() + "/" + pagingTable.getTotalRow());
+        }
+    }
+    
 
 }

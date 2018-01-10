@@ -5,7 +5,7 @@
  */
 package org.vn.movieviewer.view.dialog;
 
-import org.vn.movieviewer.config.StarRater;
+import org.vn.movieviewer.renderer.StarRater;
 import org.vn.movieviewer.view.main.NewJFrame;
 
 /**
@@ -33,7 +33,7 @@ public class VoteDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        starRater1 = new org.vn.movieviewer.config.StarRater();
+        starRater1 = new org.vn.movieviewer.renderer.StarRater();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -153,7 +153,7 @@ public class VoteDialog extends javax.swing.JDialog {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
-    private org.vn.movieviewer.config.StarRater starRater1;
+    private org.vn.movieviewer.renderer.StarRater starRater1;
     // End of variables declaration//GEN-END:variables
 
     private void initView() {

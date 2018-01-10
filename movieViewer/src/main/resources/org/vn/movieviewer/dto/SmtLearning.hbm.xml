@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jan 3, 2018 2:37:20 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="org.vn.movieviewer.dto.SmtLearning" table="smt_learning" catalog="movies_db" optimistic-lock="version">
+        <id name="idsmtLearning" type="java.lang.Integer">
+            <column name="idsmt_learning" />
+            <generator class="identity" />
+        </id>
+        <property name="smtAction" type="string">
+            <column name="smt_action" length="45" not-null="true" />
+        </property>
+        <property name="smtValue1" type="string">
+            <column name="smt_value1" length="16777215" />
+        </property>
+        <property name="smtValue2" type="string">
+            <column name="smt_value2" length="45" />
+        </property>
+    </class>
+</hibernate-mapping>

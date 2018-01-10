@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vn.movieviewer.config;
+package org.vn.movieviewer.renderer;
 
 import java.util.Iterator;
 import java.util.List;
@@ -76,7 +76,7 @@ public class PagingTable {
     public void nextPage() {
         if (this.curentPage < this.getTotalPage()) {
             this.curentPage++;
-            this.start = (this.curentPage - 1) * this.getPageOffset();
+            this.setStart((this.curentPage - 1) * this.getPageOffset());
             this.limit = Math.min(this.curentPage * this.getPageOffset(), idList.size());
             AddPageToRowCache();
         }
@@ -85,7 +85,7 @@ public class PagingTable {
     public void prevPage() {
         if (this.curentPage > FIRST_PAGE) {
             curentPage--;
-            this.start = (this.curentPage - 1) * this.getPageOffset();
+            this.setStart((this.curentPage - 1) * this.getPageOffset());
             this.limit = Math.min(this.curentPage * this.getPageOffset(), idList.size());
             AddPageToRowCache();
         }
@@ -97,7 +97,7 @@ public class PagingTable {
     public void setCurentPage(int curentPage) {
         if (this.curentPage >= FIRST_PAGE && this.curentPage <= this.getTotalPage()) {
             this.curentPage = curentPage;
-            this.start = (this.curentPage - 1) * this.getPageOffset();
+            this.setStart((this.curentPage - 1) * this.getPageOffset());
             this.limit = Math.min(this.curentPage * this.getPageOffset(), idList.size());
             AddPageToRowCache();
         }
@@ -140,5 +140,12 @@ public class PagingTable {
      */
     public int getPageOffset() {
         return pageOffset;
+    }
+
+    /**
+     * @param start the start to set
+     */
+    public void setStart(int start) {
+        this.start = start;
     }
 }

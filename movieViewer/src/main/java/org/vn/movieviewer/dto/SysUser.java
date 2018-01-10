@@ -1,11 +1,11 @@
 package org.vn.movieviewer.dto;
-// Generated Dec 1, 2017 10:54:07 AM by Hibernate Tools 4.3.1
+// Generated Jan 3, 2018 2:37:20 PM by Hibernate Tools 4.3.1
 
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -14,17 +14,13 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="sys_user"
+    ,catalog="movies_db"
 )
 public class SysUser  implements java.io.Serializable {
 
 
-    @Id
-    @Column(name="idsys_user", unique=true, nullable=false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
      private Integer idsysUser;
-    @Column(name="username", nullable=false)
      private String username;
-@Column(name="password", nullable=false, length=45)
      private String password;
 
     public SysUser() {
@@ -35,6 +31,10 @@ public class SysUser  implements java.io.Serializable {
        this.password = password;
     }
    
+     @Id @GeneratedValue(strategy=IDENTITY)
+
+    
+    @Column(name="idsys_user", unique=true, nullable=false)
     public Integer getIdsysUser() {
         return this.idsysUser;
     }
@@ -44,6 +44,7 @@ public class SysUser  implements java.io.Serializable {
     }
 
     
+    @Column(name="username", nullable=false)
     public String getUsername() {
         return this.username;
     }
@@ -53,6 +54,7 @@ public class SysUser  implements java.io.Serializable {
     }
 
     
+    @Column(name="password", nullable=false, length=45)
     public String getPassword() {
         return this.password;
     }

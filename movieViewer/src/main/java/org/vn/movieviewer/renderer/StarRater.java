@@ -1,4 +1,4 @@
-package org.vn.movieviewer.config;
+package org.vn.movieviewer.renderer;
 
 import java.awt.Dimension;
 import java.awt.Graphics;

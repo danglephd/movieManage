@@ -1,11 +1,11 @@
 package org.vn.movieviewer.dto;
-// Generated Dec 1, 2017 10:54:07 AM by Hibernate Tools 4.3.1
+// Generated Jan 3, 2018 2:37:20 PM by Hibernate Tools 4.3.1
 
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -14,15 +14,12 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="main_genre"
+    ,catalog="movies_db"
 )
 public class MainGenre  implements java.io.Serializable {
 
 
-    @Id
-    @Column(name="idmain_genre", unique=true, nullable=false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
      private Integer idmainGenre;
-    @Column(name="name", nullable=false, length=100)
      private String name;
 
     public MainGenre() {
@@ -32,6 +29,10 @@ public class MainGenre  implements java.io.Serializable {
        this.name = name;
     }
    
+     @Id @GeneratedValue(strategy=IDENTITY)
+
+    
+    @Column(name="idmain_genre", unique=true, nullable=false)
     public Integer getIdmainGenre() {
         return this.idmainGenre;
     }
@@ -41,6 +42,7 @@ public class MainGenre  implements java.io.Serializable {
     }
 
     
+    @Column(name="name", nullable=false, length=100)
     public String getName() {
         return this.name;
     }

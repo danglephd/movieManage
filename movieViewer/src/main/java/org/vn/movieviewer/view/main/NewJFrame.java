@@ -33,11 +33,12 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.vn.movieviewer.config.GlobalVariables;
-import org.vn.movieviewer.config.PagingTable;
-import org.vn.movieviewer.config.StarRater;
-import org.vn.movieviewer.config.TableModelGeneral;
-import org.vn.movieviewer.config.Untils;
+import org.vn.movieviewer.renderer.PagingTable;
+import org.vn.movieviewer.renderer.StarRater;
+import org.vn.movieviewer.renderer.TableModelGeneral;
+import org.vn.movieviewer.config.Utils;
 import org.vn.movieviewer.dao.daoMainGenre;
 import org.vn.movieviewer.dao.daoMainMovie;
 import org.vn.movieviewer.dto.MainGenre;
@@ -51,7 +52,7 @@ import org.vn.movieviewer.view.dialog.VoteDialog;
  */
 public class NewJFrame extends javax.swing.JFrame {
 
-    private static Logger logger = Logger.getLogger(NewJFrame.class);
+    private static Logger logger = null;//Logger.getLogger(NewJFrame.class);
     private TableModelGeneral tableModelMovies;
 //    private List<MainMovie> lstImportMovies = null;
     private File[] listOfFiles = null;
@@ -68,10 +69,11 @@ public class NewJFrame extends javax.swing.JFrame {
      */
     public NewJFrame() {
         initComponents();
+        createConfigData();
+        loadConfigure();
         this.setTitle("Quản lý phim ảnh");
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         exampleStar();
-        createConfigData();
         String[] columnNames = {
             "STT", "Tên phim", "Đánh giá", "Thể loại", "Ngày tạo", "Phụ đề", "Đã xem"
         };
@@ -83,6 +85,12 @@ public class NewJFrame extends javax.swing.JFrame {
         initFormView();
         setPanelEnabled(jPanel1, false);
         setPanelEnabled(jPanel3, true);
+        
+        //tesst
+        
+        SubtitleCompaireFrm frm = new SubtitleCompaireFrm();
+        frm.setLocationRelativeTo(null);
+        frm.setVisible(true);
     }
 
     /**
@@ -113,8 +121,8 @@ public class NewJFrame extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jBtVote = new javax.swing.JButton();
-        starRater1 = new org.vn.movieviewer.config.StarRater();
         jLRating = new javax.swing.JLabel();
+        starRater1 = new org.vn.movieviewer.renderer.StarRater();
         jLabel10 = new javax.swing.JLabel();
         jTFImgUrl = new javax.swing.JTextField();
         jBtUpdate = new javax.swing.JButton();
@@ -153,7 +161,7 @@ public class NewJFrame extends javax.swing.JFrame {
         jMIExit = new javax.swing.JMenuItem();
         jMINewMovies = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
-        jMenu3 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -213,8 +221,6 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
-        starRater1.setEnabled(false);
-
         jLRating.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -222,22 +228,24 @@ public class NewJFrame extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(starRater1, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
-                    .addComponent(jLRating, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(starRater1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLRating, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jBtVote))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jBtVote)
-                .addContainerGap())
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(starRater1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(7, 7, 7)
                 .addComponent(jLRating, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(starRater1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jBtVote))
+                .addContainerGap())
         );
 
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -342,7 +350,7 @@ public class NewJFrame extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGap(6, 6, 6)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jCBSubtitle, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                                    .addComponent(jCBSubtitle, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
                                     .addComponent(jCBWatched, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -610,8 +618,13 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jMenu2.setText("Edit");
 
-        jMenu3.setText("jMenu3");
-        jMenu2.add(jMenu3);
+        jMenuItem1.setText("Biên tập phụ đề");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem1);
 
         jMenuBar1.add(jMenu2);
 
@@ -628,7 +641,7 @@ public class NewJFrame extends javax.swing.JFrame {
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -706,26 +719,26 @@ public class NewJFrame extends javax.swing.JFrame {
             List<MainMovie> selectedMovies = new ArrayList<>();
             for (int i = 0; i < selectedRows.length; i++) {
                 int t = selectedRows[i];
-                selectedMovies.add((MainMovie)this.pagingTable.getByRow(t));
+                selectedMovies.add((MainMovie) this.pagingTable.getByRow(t));
             }
             String conditions = "";
             Map<String, Object> params = new HashMap<String, Object>();
-            
-            if(jCBSubtitle.isEnabled()){
+
+            if (jCBSubtitle.isEnabled()) {
                 conditions = putConditions(conditions, " subtitle = :subtitle ");
                 params.put("subtitle", jCBSubtitle.isSelected());
             }
-            
-            if(jCBWatched.isEnabled()){
+
+            if (jCBWatched.isEnabled()) {
                 conditions = putConditions(conditions, " isWatched = :isWatched ");
                 params.put("isWatched", jCBWatched.isSelected());
             }
-            
-            if(isUpdateGenres){
+
+            if (isUpdateGenres) {
                 conditions = putConditions(conditions, " genres = :genres ");
                 params.put("genres", jTPGenres.getText());
             }
-            
+
             daoMainMovie.update(selectedMovies, conditions, params);
         }
         pagingTable.AddPageToRowCache();
@@ -734,15 +747,15 @@ public class NewJFrame extends javax.swing.JFrame {
         setPanelEnabled(jPanel3, true);
     }//GEN-LAST:event_jBtUpdateActionPerformed
 
-    private String putConditions(String condition, String strToPut){
-        if(!condition.equals("")){
+    private String putConditions(String condition, String strToPut) {
+        if (!condition.equals("")) {
             condition += " , " + strToPut;
-        }else{
+        } else {
             condition += strToPut;
         }
         return condition;
     }
-    
+
     private void jBtAddGenreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtAddGenreActionPerformed
         // TODO add your handling code here:
 //        MainMovie movieSelected = lstImportMovies.get(selectedRow);
@@ -827,38 +840,45 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
-        String selectedGenre = (String)jCBGenre.getSelectedItem();
+        String selectedGenre = (String) jCBGenre.getSelectedItem();
         String movieNameSearch = jTFMovieNameSearch.getText();
         String conditions = "";
-        
-        if(!selectedGenre.equals("Tất cả")){
+
+        if (!selectedGenre.equals("Tất cả")) {
             conditions = " where genres like '%" + selectedGenre + "%'";
         }
-        
-        if(!movieNameSearch.equals("")){
-            if(conditions.equals("")){
+
+        if (!movieNameSearch.equals("")) {
+            if (conditions.equals("")) {
                 conditions += " where name like '%" + movieNameSearch + "%'";
-            }else{
+            } else {
                 conditions += " and name like '%" + movieNameSearch + "%'";
             }
         }
-        
+
         loadMoviesFromDatabase(conditions);
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jCBSubtitleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCBSubtitleMouseClicked
         // TODO add your handling code here:
-        if(!jCBSubtitle.isEnabled() && jPanel1.isEnabled()){
+        if (!jCBSubtitle.isEnabled() && jPanel1.isEnabled()) {
             jCBSubtitle.setEnabled(true);
         }
     }//GEN-LAST:event_jCBSubtitleMouseClicked
 
     private void jCBWatchedMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCBWatchedMouseClicked
         // TODO add your handling code here:
-        if(!jCBWatched.isEnabled() && jPanel1.isEnabled()){
+        if (!jCBWatched.isEnabled() && jPanel1.isEnabled()) {
             jCBWatched.setEnabled(true);
         }
     }//GEN-LAST:event_jCBWatchedMouseClicked
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+        SubtitleCompaireFrm frm = new SubtitleCompaireFrm();
+        frm.setLocationRelativeTo(null);
+        frm.setVisible(true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void loadNewMovieFromFolder(String filePath) {
         File folder = new File(filePath);
@@ -1021,7 +1041,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private void viewMoviesInfo() {
         setPanelEnabled(jPanel1, true);
         setPanelEnabled(jPanel3, false);
-        
+
         jCBSubtitle.setEnabled(false);
         jCBWatched.setEnabled(false);
 
@@ -1122,6 +1142,27 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void createConfigData() {
         try {
+            
+            File logConfig = new File(System.getProperty("user.dir") + File.separator + "log4j.properties");
+            if (!logConfig.exists()) {
+                InputStream resource = NewJFrame.class.getClassLoader().getResourceAsStream("ConfigFile/log4j.properties");
+                if (resource != null) {
+                    try (InputStream in = resource;
+                            OutputStream writer = new BufferedOutputStream(
+                                    new FileOutputStream(logConfig.getAbsolutePath()))) {
+                        byte[] buffer = new byte[1024 * 4];
+                        int length;
+                        while ((length = in.read(buffer)) >= 0) {
+                            writer.write(buffer, 0, length);
+                        }
+                        writer.close();
+                        // in.close();
+                    } catch (Exception e) {
+                        //JOptionPane.showMessageDialog(this, e.getMessage());
+                    }
+                }
+            }
+            
             File hibernateCfg = new File(System.getProperty("user.dir") + File.separator + "hibernate.cfg.xml");
             if (!hibernateCfg.exists()) {
                 InputStream resource = NewJFrame.class.getClassLoader().getResourceAsStream("ConfigFile/hibernate.cfg.xml");
@@ -1205,8 +1246,8 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMINewMovies;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1227,7 +1268,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JTextPane jTPGenres2;
     private javax.swing.JTable jTableMovies;
     private javax.swing.JTextPane jTextPane1;
-    private org.vn.movieviewer.config.StarRater starRater1;
+    private org.vn.movieviewer.renderer.StarRater starRater1;
     // End of variables declaration//GEN-END:variables
 
     private void loadMoviesFromDatabase(String conditions) {
@@ -1258,7 +1299,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void loadConfigInfo() {
         try {
-            Properties propertiesFile = Untils.loadPropertiesFile(System.getProperty("user.dir") + File.separator + "GeneralCfg.config");
+            Properties propertiesFile = Utils.loadPropertiesFile(System.getProperty("user.dir") + File.separator + "GeneralCfg.config");
             if (propertiesFile != null) {
                 if (propertiesFile.getProperty("folderReloadPath") != null) {
                     GlobalVariables.folderReloadPath = propertiesFile.getProperty("folderReloadPath");
@@ -1336,7 +1377,7 @@ public class NewJFrame extends javax.swing.JFrame {
     }
 
     private void initFormView() {
-        jTFYear.setInputVerifier(Untils.fieldYearReleaseVerifier);
+        jTFYear.setInputVerifier(Utils.fieldYearReleaseVerifier);
         jTFCurrentPage.setInputVerifier(new InputVerifier() {
             @Override
             public boolean verify(JComponent input) {
@@ -1392,4 +1433,22 @@ public class NewJFrame extends javax.swing.JFrame {
             jLRating.setText(GlobalVariables.df.format(rating) + " | Votes: " + numVote);
         }
     }
+    
+    private void loadConfigure() {
+        try {
+
+//            TextPaneAppender.setTextArea(jTextPaneSystemConsole);
+            logger = Logger.getLogger(NewJFrame.class);
+            PropertyConfigurator.configure(System.getProperty("user.dir") + File.separator + "log4j.properties");
+
+            logger.info("Tải cấu hình....");
+
+
+            logger.info("Kết thúc tải cấu hình.");
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            logger.error("Tải cấu hình bị lỗi.....");
+        }
+    }
+    
 }

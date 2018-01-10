@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.vn.movieviewer.config;
+package org.vn.movieviewer.renderer;
 
 import java.awt.Color;
 import java.util.logging.Logger;
