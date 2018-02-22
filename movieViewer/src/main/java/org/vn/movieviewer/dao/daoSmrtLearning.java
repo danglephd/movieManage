@@ -44,36 +44,36 @@ public class daoSmrtLearning {
 //             and smtValue2 =:smtValue2
             Query query = s.createQuery(queryStr);
             query.setParameter("smtAction", action);
-            
-            switch (arrValue.length){
+
+            switch (arrValue.length) {
                 case 1:
                     queryStr = "From SmtLearning WHERE smtAction =:smtAction and smtValue1 =:smtValue1";
                     query = s.createQuery(queryStr);
                     query.setParameter("smtAction", action);
-                    query.setParameter("smtValue1", arrValue[0]);                                          
+                    query.setParameter("smtValue1", arrValue[0]);
                     break;
                 case 2:
                     queryStr = "From SmtLearning WHERE smtAction =:smtAction and smtValue1 =:smtValue1 and smtValue2 =:smtValue2";
                     query = s.createQuery(queryStr);
                     query.setParameter("smtAction", action);
-                    query.setParameter("smtValue1", arrValue[0]);                                               
-                    query.setParameter("smtValue2", arrValue[1]);                                        
+                    query.setParameter("smtValue1", arrValue[0]);
+                    query.setParameter("smtValue2", arrValue[1]);
                     break;
             }
             SmtLearning l = (SmtLearning) query.uniqueResult();
-            
+
             if (l == null) {
                 logger.debug("Insert: " + action);
                 l = new SmtLearning();
                 l.setSmtAction(action);
                 for (int i = 0; i < arrValue.length; i++) {
 //                    String string = arrValue[i];
-                    switch (i){
+                    switch (i) {
                         case 0:
-                            l.setSmtValue1(arrValue[i]);                                            
+                            l.setSmtValue1(arrValue[i]);
                             break;
                         case 1:
-                            l.setSmtValue2(arrValue[i]);                                            
+                            l.setSmtValue2(arrValue[i]);
                             break;
                     }
                 }
@@ -112,6 +112,29 @@ public class daoSmrtLearning {
         } finally {
         }
         return result;
+    }
+
+    public static void insertOrUpdate(SmtLearning fstlearning) {
+        sf = HibernateUtil.getSessionFactory();
+        Session s = null;
+        try {
+            s = sf.openSession();
+            s.beginTransaction();
+            
+            if(fstlearning.getIdsmtLearning() != null){
+                s.update(fstlearning);
+            }else{
+                s.save(fstlearning);
+            }
+            
+            s.getTransaction().commit();
+            s.clear();
+            s.close();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            logger.error(e.getCause());
+            HibernateUtil.closeSessionFactory();
+        }      
     }
 
 }

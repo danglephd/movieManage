@@ -18,7 +18,7 @@ public class PagingTable {
 
     public static int FIRST_PAGE = 1;
 
-    private int pageOffset = 25;
+    private int pageOffset = 16;
     private int totalPage;
     private int curentPage;
     private int start;

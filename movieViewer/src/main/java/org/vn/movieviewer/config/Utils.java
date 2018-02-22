@@ -5,15 +5,20 @@
  */
 package org.vn.movieviewer.config;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.vn.movieviewer.renderer.PagingTable;
 
 /**
@@ -21,6 +26,8 @@ import org.vn.movieviewer.renderer.PagingTable;
  * @author danglph
  */
 public class Utils {
+        private static Logger logger = Logger.getLogger(Utils.class);
+
     public static Properties loadPropertiesFile(String path) {
         try {
             //CreatePropertiesFile();
@@ -73,6 +80,34 @@ public class Utils {
             jLDataFrom.setText("Dữ liệu từ " + (pagingTable.getStart() + 1) + " - " + pagingTable.getLimit() + "/" + pagingTable.getTotalRow());
         }
     }
+    
+    public static void printFolderSize(File file){
+        
+        File folder = file;
+        File[] arrFile = folder.listFiles();
+
+        long size = FileUtils.sizeOfDirectory(file);
+        List<File> lstFile = new ArrayList<>();
+        List<File> lstFolder = new ArrayList<>();
+        for (int i = 0; i < arrFile.length; i++) {
+            File file1 = arrFile[i];
+            if (file1.isDirectory()) {
+                lstFolder.add(file1);
+            } else if (file1.isFile()) {
+                lstFile.add(file1);
+            }
+        }
+        logger.debug("folder size ~ " + viewSize(size, 0) + "(" + size + ")");
+        logger.debug("nuber folders ~ " + lstFolder.size());
+        logger.debug("number files ~ " + lstFile.size());
+    }
+    private static String viewSize(long size, int div) {
+        if (size > 1024) {
+            return viewSize(size / 1024, div + 1);
+        }
+        return size + " " + (div == 0 ? "bytes" : (div == 1 ? "KB" : div == 2 ? "MB" : (div == 3 ? "GB" : "TB")));
+    }
+
     
 
 }

@@ -16,6 +16,10 @@ public class GlobalVariables {
     public static final ImageIcon imgDelete = new ImageIcon(ClassLoader.getSystemResource("Images/delete-icon.png"));
     public static final ImageIcon imgViewDetail = new ImageIcon(ClassLoader.getSystemResource("Images/view-detail-icon.png"));
     public static String folderReloadPath = "";    
+    public static String lastEngFolder_key = "lastEngFolder";    
+    public static String lastVieFolder_key = "lastVieFolder";    
+    public static String folderEngReloadPath = "";    
+    public static String folderVieReloadPath = "";    
     public static String folderSrt = "D:\\Software\\Mu-vi\\srt";    
     public static String pathToSaveEngSrt = "D:\\Software\\Mu-vi\\srt\\eng_123.srt";    
     public static String pathToSaveVieSrt = "D:\\Software\\Mu-vi\\srt\\vie_123.srt";    

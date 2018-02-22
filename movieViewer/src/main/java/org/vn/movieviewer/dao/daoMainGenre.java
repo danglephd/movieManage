@@ -28,7 +28,8 @@ public class daoMainGenre {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
 
-        get();
+//        get();
+        insert("MMMM");
     }
     
 

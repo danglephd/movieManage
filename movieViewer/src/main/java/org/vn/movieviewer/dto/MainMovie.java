@@ -1,5 +1,5 @@
 package org.vn.movieviewer.dto;
-// Generated Jan 3, 2018 2:37:20 PM by Hibernate Tools 4.3.1
+// Generated Jan 17, 2018 10:54:29 AM by Hibernate Tools 4.3.1
 
 
 import java.util.Date;

@@ -10,11 +10,13 @@ package org.vn.movieviewer.dto;
  * @author danglph
  */
 public class SentenceDto {
+
     private int rowNumber;
     private String timeString;
     private StringBuilder content = new StringBuilder();
     private StringBuilder contentTranslate = new StringBuilder();
     private boolean isDifferent;
+    private boolean isTranslate;
 
     public SentenceDto() {
     }
@@ -71,17 +73,10 @@ public class SentenceDto {
     public void setContent(String content) {
         this.content.append(content);
     }
-    
+
     public void initContent(String content) {
         this.content = new StringBuilder();
         this.content.append(content);
-    }
-
-    /**
-     * @param isDifferent the isDifferent to set
-     */
-    public void setIsDifferent(boolean isDifferent) {
-        this.isDifferent = isDifferent;
     }
 
     /**
@@ -97,7 +92,7 @@ public class SentenceDto {
     public void setContentTranslate(String contentTranslate) {
         this.contentTranslate.append(contentTranslate);
     }
-    
+
     public void initContentTranslate(String contentTranslate) {
         this.contentTranslate = new StringBuilder();
         this.contentTranslate.append(contentTranslate);
@@ -106,5 +101,19 @@ public class SentenceDto {
     public void compaireContent() {
         isDifferent = this.content.toString().equals(this.contentTranslate.toString());
     }
-    
+
+    /**
+     * @return the isTranslate
+     */
+    public boolean getIsTranslate() {
+        return isTranslate;
+    }
+
+    /**
+     * @param isTranslate the isTranslate to set
+     */
+    public void setIsTranslate(boolean isTranslate) {
+        this.isTranslate = isTranslate;
+    }
+
 }

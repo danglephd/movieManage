@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jan 17, 2018 10:54:29 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="org.vn.movieviewer.dto.SysConfig" table="sys_config" catalog="movies_db" optimistic-lock="version">
+        <id name="idsysApp" type="java.lang.Integer">
+            <column name="idsys_app" />
+            <generator class="identity" />
+        </id>
+        <property name="keyCfg" type="string">
+            <column name="keyCfg" length="45" not-null="true" />
+        </property>
+        <property name="value1" type="string">
+            <column name="value1" />
+        </property>
+        <property name="value2" type="string">
+            <column name="value2" />
+        </property>
+    </class>
+</hibernate-mapping>

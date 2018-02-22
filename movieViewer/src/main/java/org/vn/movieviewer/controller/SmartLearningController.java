@@ -18,9 +18,11 @@ import org.vn.movieviewer.dto.SmtLearning;
  */
 public class SmartLearningController {
 
+    public final static String SAVE_TRANS = "SAVE_TRANS";
     public final static String DELETE = "DELETE";
     public final static String DELETE_PATTERN = "DELETE_PATTERN";
     public final static String FIND = "FIND";
+    public final static String IGNORE = "IGNORE";
     public final static String INSERT = "INSERT";
     public final static String REPLACE = "REPLACE";
 
@@ -28,22 +30,39 @@ public class SmartLearningController {
     public final static String END_POS = "END_POS";
     public final static String ANOTHER_POS = "ANOTHER_POS";
     public final static String ANY_POS = "ANY_POS";
-    private static List<SmtLearning> smtLearnings = null;
+    private static Map<String, Object> mapLearnings = null;
+    private static List<SmtLearning> lstLearnings = null;
+    
+    private static void init(){
+//        Map<String, Object> mapLearning = 
+    }
+    
+//    public static 
 
     public static String isMatchAction(String action, String strToCompair) {
-        if (smtLearnings == null) {
-            smtLearnings = daoSmrtLearning.getByAction(action);
+        if (mapLearnings == null) {
+            mapLearnings = new HashMap<String, Object>();
         }
-        for (Iterator<SmtLearning> iterator = smtLearnings.iterator(); iterator.hasNext();) {
+        
+        if(!mapLearnings.containsKey(action)){
+            mapLearnings.put(action, daoSmrtLearning.getByAction(action));
+        }
+        lstLearnings = (List<SmtLearning>)mapLearnings.get(action);
+        
+        for (Iterator<SmtLearning> iterator = lstLearnings.iterator(); iterator.hasNext();) {
             SmtLearning next = iterator.next();
-            if(next.getSmtValue2().equals(START_POS)){
+            if(next.getSmtValue2() != null && next.getSmtValue2().equals(START_POS)){
                 if(strToCompair.startsWith(next.getSmtValue1())){
                     return next.getSmtValue1();
                 }   
-            }else if(next.getSmtValue2().equals(END_POS)){
+            }else if(next.getSmtValue2() != null && next.getSmtValue2().equals(END_POS)){
                 if(strToCompair.endsWith(next.getSmtValue1())){
                     return next.getSmtValue1();
                 }                
+            }else{
+                if(strToCompair.contains(next.getSmtValue1())){
+                    return next.getSmtValue1();
+                }
             }
         }
         return "";
@@ -65,7 +84,9 @@ public class SmartLearningController {
     }
 
     public static void learn(String action, String value1) {
-        daoSmrtLearning.insert(action, value1);
+        daoSmrtLearning.insert(action, value1, START_POS);
+        //add vào map
+        //...
     }
 
     private static Map<String, String> findTheSame(String action) {

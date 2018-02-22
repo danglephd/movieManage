@@ -63,6 +63,7 @@ Contributor(s):
     <mapping resource="org/vn/movieviewer/dto/MainAct.hbm.xml"/>
     <mapping resource="org/vn/movieviewer/dto/MainMovie.hbm.xml"/>
     <mapping resource="org/vn/movieviewer/dto/MainGenre.hbm.xml"/>
+    <mapping resource="org/vn/movieviewer/dto/SysConfig.hbm.xml"/>
     <mapping resource="org/vn/movieviewer/dto/SysUser.hbm.xml"/>
   </session-factory>
 </hibernate-configuration>

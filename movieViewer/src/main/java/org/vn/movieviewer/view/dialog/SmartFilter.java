@@ -397,21 +397,23 @@ public class SmartFilter extends javax.swing.JDialog {
 
     private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
         // TODO add your handling code here:
-        List<Integer> lstDeleteIndex = new ArrayList<>();
-        SubtitleCompaireFrm parent = (SubtitleCompaireFrm)this.getParent();
-        
+        List<Integer> lstDeleteRowIndex = new ArrayList<>();
+        SubtitleCompaireFrm parent = (SubtitleCompaireFrm) this.getParent();
+
         for (Map.Entry<Integer, EditorSentenceDto> entry : mapEditorSentenceDto.entrySet()) {
             Integer key = entry.getKey();
             EditorSentenceDto value = entry.getValue();
-            if(value.getProccess().equals(EditorSentenceDto.APPLY)){
-                lstDeleteIndex.add(value.getRowNumber());
+            if (!value.getProccess().equals(EditorSentenceDto.DENY)) {
+                lstDeleteRowIndex.add(value.getRowNumber());
+            } else {
+                SmartLearningController.learn(SmartLearningController.IGNORE, value.getContent().toString());
             }
         }
-        
-        if(parent != null && lstDeleteIndex.size() > 0){
-            parent.UpdateSub(lstDeleteIndex);
+
+        if (parent != null && lstDeleteRowIndex.size() > 0) {
+            parent.UpdateSub(lstDeleteRowIndex);
         }
-        
+
         //close dialog
         this.dispose();
     }//GEN-LAST:event_jButton14ActionPerformed
@@ -518,8 +520,7 @@ public class SmartFilter extends javax.swing.JDialog {
                     setBackground(Color.RED);
                 } else if (s.equalsIgnoreCase(EditorSentenceDto.DENY)) {
                     setBackground(Color.GREEN);
-                }
-                else {
+                } else {
                     setBackground(Color.darkGray);
                 }
 
@@ -590,23 +591,27 @@ public class SmartFilter extends javax.swing.JDialog {
         }
 
         int i = 0;
+        StringBuffer matchContent = null;
         for (Map.Entry<Integer, SentenceDto> entry : mapSentenceDto.entrySet()) {
             Integer key = entry.getKey();
             SentenceDto value = entry.getValue();
-            String matchContent = SmartLearningController.isMatchAction(SmartLearningController.DELETE_PATTERN, value.getContent().toString());
-            if (!matchContent.equals("")) {
-                EditorSentenceDto matchItem = new EditorSentenceDto(key);
-                matchItem.setRowNumber(key);
-                matchItem.setAction(SmartLearningController.DELETE_PATTERN);
-                matchItem.initContent(value.getContent().toString());
-                matchItem.initContentTranslate(value.getContentTranslate().toString());
-                matchItem.initMatchContent(matchContent);
+            matchContent = new StringBuffer();
+            matchContent.append(SmartLearningController.isMatchAction(SmartLearningController.IGNORE, value.getContent().toString()));
+            if (matchContent.toString().equals("")) {
+                matchContent = new StringBuffer();
+                matchContent.append(SmartLearningController.isMatchAction(SmartLearningController.DELETE_PATTERN, value.getContent().toString()));
+                if (!matchContent.toString().equals("")) {
+                    EditorSentenceDto matchItem = new EditorSentenceDto(key);
+                    matchItem.setRowNumber(key);
+                    matchItem.setAction(SmartLearningController.DELETE_PATTERN);
+                    matchItem.initContent(value.getContent().toString());
+                    matchItem.initContentTranslate(value.getContentTranslate().toString());
+                    matchItem.initMatchContent(matchContent.toString());
 
-                this.mapEditorSentenceDto.put(i++, matchItem);
+                    this.mapEditorSentenceDto.put(i++, matchItem);
+                }
             }
-
         }
-
     }
 
     private List<Integer> getIDList(Map<Integer, EditorSentenceDto> mapEditorSentenceDto) {
@@ -630,5 +635,12 @@ public class SmartFilter extends javax.swing.JDialog {
             lstSequenceInPage.add(mapEditorSentenceDto.get(i));
         }
         return lstSequenceInPage;
+    }
+
+    /**
+     * @return the mapEditorSentenceDto
+     */
+    public boolean existData() {
+        return (this.mapEditorSentenceDto != null && this.mapEditorSentenceDto.size() > 0);
     }
 }

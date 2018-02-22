@@ -56,7 +56,43 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.5</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.5</version>
+        </dependency>
 
     </dependencies>
     
+    <build>
+        <plugins>  
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <finalName>something-else</finalName>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.vn.movieviewer.view.main.NewJFrame</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>                       
+                    </descriptorRefs>                    
+                    <finalName>S25</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                  
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>       
+                    </execution> 
+                </executions>
+            </plugin>
+        </plugins>        
+    </build>
+    <name>S25</name>
 </project>

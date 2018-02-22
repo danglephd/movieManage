@@ -1304,6 +1304,12 @@ public class NewJFrame extends javax.swing.JFrame {
                 if (propertiesFile.getProperty("folderReloadPath") != null) {
                     GlobalVariables.folderReloadPath = propertiesFile.getProperty("folderReloadPath");
                 }
+                if (propertiesFile.getProperty("lastEngFolder") != null) {
+                    GlobalVariables.folderEngReloadPath = propertiesFile.getProperty("lastEngFolder");
+                }
+                if (propertiesFile.getProperty("lastVieFolder") != null) {
+                    GlobalVariables.folderVieReloadPath = propertiesFile.getProperty("lastVieFolder");
+                }
             }
             logger.info("Kết thúc tải cấu hình.");
         } catch (Exception e) {
