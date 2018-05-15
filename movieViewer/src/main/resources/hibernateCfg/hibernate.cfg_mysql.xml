@@ -45,6 +45,7 @@ Contributor(s):
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
     <property name="hibernate.connection.url">jdbc:mysql://127.0.0.1:3306/movies_db</property>
     <property name="hibernate.show_sql">true</property>
+    <property name="hibernate.default_catalog">movies_db</property>
     <property name="hibernate.connection.username">movie.user</property>
     <property name="hibernate.connection.password">Abc123!@</property>
     <!-- <property name="hibernate.hbm2ddl.auto" >create</property> -->
@@ -58,17 +59,12 @@ Contributor(s):
     <property name="hibernate.c3p0.acquireRetryAttempts">5</property>
     <property name="hibernate.c3p0.acquireRetryDelay">200</property>
     <property name="hibernate.c3p0.timeout">40</property>
-    <!--    <mapping class="org.vn.movieviewer.dto.genreDto"/>
-    <mapping class="org.vn.movieviewer.dto.moviesDto"/>-->
-    <!--    <mapping resource="ConfigFile/hibernate.hbm.xml"/>
-    <mapping resource="org/vn/movieviewer/dto/MainMovie.hbm.xml"/>
-    <mapping resource="org/vn/movieviewer/dto/MainAct.hbm.xml"/>
-    <mapping resource="org/vn/movieviewer/dto/MainGenre.hbm.xml"/>
-    <mapping resource="org/vn/movieviewer/dto/SysUser.hbm.xml"/>-->
-    <mapping resource="ConfigFile/hibernate.hbm.xml"/>
+    <mapping resource="org/vn/movieviewer/dto/SmtLearning.hbm.xml"/>
     <mapping resource="org/vn/movieviewer/dto/MainAct.hbm.xml"/>
     <mapping resource="org/vn/movieviewer/dto/MainMovie.hbm.xml"/>
     <mapping resource="org/vn/movieviewer/dto/MainGenre.hbm.xml"/>
+    <mapping resource="org/vn/movieviewer/dto/SysConfig.hbm.xml"/>
     <mapping resource="org/vn/movieviewer/dto/SysUser.hbm.xml"/>
+    <mapping resource="org/vn/movieviewer/dto/SysPermission.hbm.xml"/>
   </session-factory>
 </hibernate-configuration>

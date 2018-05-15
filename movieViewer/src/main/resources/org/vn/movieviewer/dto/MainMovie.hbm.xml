@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Jan 17, 2018 10:54:29 AM by Hibernate Tools 4.3.1 -->
+<!-- Generated Apr 12, 2018 11:14:16 AM by Hibernate Tools 4.3.1 -->
 <hibernate-mapping>
-    <class name="org.vn.movieviewer.dto.MainMovie" table="main_movie" catalog="movies_db" optimistic-lock="version">
+    <class name="org.vn.movieviewer.dto.MainMovie" table="main_movie" optimistic-lock="version">
         <id name="idmainMovie" type="java.lang.Integer">
             <column name="idmain_movie" />
             <generator class="identity" />

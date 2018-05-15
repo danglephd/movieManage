@@ -5,13 +5,21 @@
  */
 package org.vn.movieviewer.config;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import javax.activation.MimetypesFileTypeMap;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -101,6 +109,7 @@ public class Utils {
         logger.debug("nuber folders ~ " + lstFolder.size());
         logger.debug("number files ~ " + lstFile.size());
     }
+    
     private static String viewSize(long size, int div) {
         if (size > 1024) {
             return viewSize(size / 1024, div + 1);
@@ -108,6 +117,54 @@ public class Utils {
         return size + " " + (div == 0 ? "bytes" : (div == 1 ? "KB" : div == 2 ? "MB" : (div == 3 ? "GB" : "TB")));
     }
 
-    
+    public static ImageIcon getImagePosterLocal(String pathSource) {
+        String imgPath = "";
 
+        File folder = new File(pathSource);
+        File[] listOfFiles = folder.listFiles();
+        if (listOfFiles == null || listOfFiles.length <= 0) {
+            return null;
+        }
+        for (File file : listOfFiles) {
+            if (file.isFile()) {
+                String mimetype = new MimetypesFileTypeMap().getContentType(file);
+                String type = mimetype.split("/")[0];
+                if (type.equals("image")) {
+                    imgPath = file.getPath();
+                    break;
+                }
+            }
+        }
+        if (imgPath.equals("")) {
+            return null;
+        }
+        return new ImageIcon(imgPath);
+    }
+    
+    public static ImageIcon getImagePoster(String path) {
+        try {
+            System.out.println("Get Image from " + path);
+            URL url = new URL(path);
+            BufferedImage image = ImageIO.read(url);
+            System.out.println("Load image into frame...");
+            return new ImageIcon(image);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
+    }
+    
+    public static String object2Json(Object data) {
+
+        Gson gson = new GsonBuilder()
+                .create();
+        return gson.toJson(data);
+    }
+
+    public static <T> T jSon2Object(JsonElement jsonElement, Class<T> enClass) {
+
+        Gson gson = new GsonBuilder()
+                .create();
+        return gson.fromJson(jsonElement, enClass);
+    }
 }

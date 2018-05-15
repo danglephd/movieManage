@@ -5,8 +5,12 @@
  */
 package org.vn.movieviewer.view.main;
 
+import com.jafregle.Jafregle;
+import com.jafregle.Language;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,7 +19,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -51,6 +55,7 @@ import org.vn.movieviewer.dto.SmtLearning;
 import org.vn.movieviewer.dto.SysConfig;
 import org.vn.movieviewer.renderer.CellColorRenderer;
 import org.vn.movieviewer.renderer.SelectAllHeader;
+import org.vn.movieviewer.view.GoogleTranslator;
 import org.vn.movieviewer.view.dialog.SmartFilter;
 
 /**
@@ -76,15 +81,22 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
     private int[] selectedRows;
     private int[] selectedColumn;
     List<String> lstSaveTrans = null;
+    private Jafregle jafregle = new Jafregle(Language.ENGLISH, Language.VIETNAM);
+//    private GoogleTranslator translator = new GoogleTranslator();
+
+    public SubtitleCompaireFrm(JFrame parent, boolean modal) {
+//        super(parent, modal);
+    }
 
     public SubtitleCompaireFrm() {
         initComponents();
         this.setTitle("Biên tập phụ đề");
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 //        jTFSubEngFolderPath.setText(GlobalVariables.folderSrt);
+        loadEncode();
         loadPath();
         String[] columnNames = {
-            "Dòng", "Sub 1", "Sub 2", "Giống nhau", "Đã dịch"
+            "Dòng", "Sub 1", "Sub 2", "Giống nhau", "Đã dịch", "Dịch Gôgle"
         };
         initTableListenner(columnNames);
         jTFCurrentPage.setInputVerifier(new InputVerifier() {
@@ -126,6 +138,8 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jTFSubVieFolderPath = new javax.swing.JTextField();
         jButton7 = new javax.swing.JButton();
+        jCboCharsetEngFile = new javax.swing.JComboBox<>();
+        jCboCharsetVieFile = new javax.swing.JComboBox<>();
         jPanel3 = new javax.swing.JPanel();
         jTFCurrentPage = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
@@ -145,7 +159,6 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
         jBSaveVie = new javax.swing.JButton();
         jCheckBox1 = new javax.swing.JCheckBox();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -154,8 +167,6 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("Chọn file");
-
-        jTFSubEngFolderPath.setEditable(false);
 
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/if_Open_1493293.png"))); // NOI18N
         jButton5.setText("Mở thư mục");
@@ -176,8 +187,6 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("Chọn file Vie");
 
-        jTFSubVieFolderPath.setEditable(false);
-
         jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/if_Open_1493293.png"))); // NOI18N
         jButton7.setText("Mở thư mục");
         jButton7.addActionListener(new java.awt.event.ActionListener() {
@@ -197,16 +206,20 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTFSubEngFolderPath, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
+                    .addComponent(jTFSubEngFolderPath, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
                     .addComponent(jTFSubVieFolderPath))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jCboCharsetVieFile, 0, 83, Short.MAX_VALUE)
+                    .addComponent(jCboCharsetEngFile, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton6))
                     .addComponent(jButton5))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(267, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -215,13 +228,15 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jTFSubEngFolderPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5))
+                    .addComponent(jButton5)
+                    .addComponent(jCboCharsetEngFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTFSubVieFolderPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton7)
-                    .addComponent(jButton6))
+                    .addComponent(jButton6)
+                    .addComponent(jCboCharsetVieFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -403,7 +418,7 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -466,33 +481,60 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        openSubFolder(jTFSubEngFolderPath);
+        if (openSubFolder(jTFSubEngFolderPath, true)) {
+            jTFSubVieFolderPath.setText("");
+        }
     }//GEN-LAST:event_jButton5ActionPerformed
 
-    private void openSubFolder(JTextField jTextField) {
+    private Charset getFileCharset(File tempFile){
+        Charset c = Charset.defaultCharset();
+        try {
+            c = CharsetDetector.detectCharset(tempFile);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return Charset.defaultCharset();
+        }
+        return c;
+    }
+    
+    private boolean openSubFolder(JTextField jTextField, boolean isEng) {
         JFileChooser fc = new JFileChooser(jTextField.getText().equals("") ? "" : jTextField.getText());
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Subtitle FILES", "srt", "text");
+        File tempFile = new File(jTextField.getText());
+        if(tempFile.isDirectory()){
+            fc.setCurrentDirectory(tempFile);
+        }else{
+            fc.setCurrentDirectory(tempFile.getParentFile());
+        }
         fc.setFileFilter(filter);
-
+        boolean result = false;
         int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
             File file = fc.getSelectedFile();
             if (file.isFile()) {
                 jTextField.setText(file.getPath());
+                Charset c = getFileCharset(file);
+                if (isEng) {
+                    jCboCharsetEngFile.setSelectedItem(c.displayName());
+                    result = true;
+                } else if (!isEng) {
+                    jCboCharsetVieFile.setSelectedItem(c.displayName());
+                }
             } else if (file.isDirectory()) {
                 //Select folder
                 // calculator folder
                 Utils.printFolderSize(file);
             }
         }
+        return result;
     }
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
 
-        if (jTFSubEngFolderPath.getText().equals("") || jTFSubVieFolderPath.getText().equals("")) {
+        if (jTFSubEngFolderPath.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "Chưa có file phụ đề!!!");
             return;
         }
@@ -518,13 +560,9 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
         loadSubtitleMoviesFromFile(mapSentenceDto);
     }//GEN-LAST:event_jButton6ActionPerformed
 
-    private void loadCompairedSubs() {
-
-    }
-
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
-        openSubFolder(jTFSubVieFolderPath);
+        openSubFolder(jTFSubVieFolderPath, false);
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jBSaveEngActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBSaveEngActionPerformed
@@ -800,6 +838,8 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
+    private javax.swing.JComboBox<String> jCboCharsetEngFile;
+    private javax.swing.JComboBox<String> jCboCharsetVieFile;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLDataFrom;
     private javax.swing.JLabel jLTotalPages;
@@ -830,7 +870,7 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
         this.tableModelSubtitle.getDataVector().removeAllElements();
         if (lstObject != null && !lstObject.isEmpty()) {
             Object[] moviesData = null;
-
+//          "Dòng", "Sub 1", "Sub 2", "Giống nhau", "Đã dịch", "Dịch Gôgle"
             for (int i = 0; i < lstObject.size(); i++) {
                 moviesData = new Object[this.tableModelSubtitle.getColumnCount()];
                 SentenceDto sentenceDto = (SentenceDto) lstObject.get(i);
@@ -839,6 +879,7 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
                 moviesData[2] = sentenceDto.getContentTranslate();
                 moviesData[3] = sentenceDto.getIsDifferent();
                 moviesData[4] = sentenceDto.getIsTranslate();
+                moviesData[5] = "TRANSLATE";
                 tableModelSubtitle.addRow(moviesData);
             }
         }
@@ -903,13 +944,39 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
 //                }
 //            }
 //        });
+        this.jTable1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                int row = jTable1.rowAtPoint(evt.getPoint());
+                int col = jTable1.columnAtPoint(evt.getPoint());
+                if (row >= 0 && col == 5) {
+                    int returnValue = JOptionPane.showConfirmDialog(null, "Bạn muốn dịch bằng Gôgle?", "Dịch Eng->Vie", JOptionPane.YES_NO_OPTION);
+                    if(returnValue == JOptionPane.YES_OPTION){
+                        try {
+                            TableModelGeneral model = tableModelSubtitle;
+                            Object value = model.getValueAt(row, COLUMN_ENG);
+                            logger.info(">>>" + value);
+                            String result = translateLocal(value.toString());
+                            logger.debug(value + " - Translate- " + result);
+                            model.setValueAt(result, row, COLUMN_VIE);
+                            UpdateToMap(result, row, COLUMN_VIE);
+                        } catch (Exception ec) {
+                            logger.error(ec.getMessage(), ec);
+                        }
+                        
+                    }
+                }
+            }
+            
+        });
         this.jTable1.setDefaultRenderer(Object.class, new CellColorRenderer());
         this.jTable1.setModel(tableModelSubtitle);
         this.jTable1.setRowHeight(30);
 
         TableColumn column0 = this.jTable1.getColumnModel().getColumn(0);
         TableColumn column1 = this.jTable1.getColumnModel().getColumn(1);
-        TableColumn column2 = this.jTable1.getColumnModel().getColumn(2);
+        TableColumn column2 = this.jTable1.getColumnModel().getColumn(2);        
+        TableColumn column3 = this.jTable1.getColumnModel().getColumn(3);
         TableColumn column4 = this.jTable1.getColumnModel().getColumn(4);
         column4.setHeaderRenderer(new SelectAllHeader(this.jTable1, 4));
         column0.setCellRenderer(new DefaultTableCellRenderer() {
@@ -921,16 +988,19 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
                 if ((boolean) table.getModel().getValueAt(row, 4)) {
                     setBackground(new Color(72, 88, 255));// màu xanh dương
                 } else {
-                    setBackground(new Color(185, 210, 255));// màu xasm
+                    setBackground(new Color(253, 253, 253));// màu xasm
                 }
 
                 return super.getTableCellRendererComponent(table, value, isSelected, hasFocus,
                         row, col);
             }
         });
-        column1.setPreferredWidth(600);
+        column0.setPreferredWidth(60);
+        column1.setPreferredWidth(500);
         column2.setPreferredWidth(500);
-        this.jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        column3.setPreferredWidth(100);
+        column4.setPreferredWidth(100);
+        this.jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);//AUTO_RESIZE_LAST_COLUMN);
 //
 //        TableColumn column1 = this.jTable1.getColumnModel().getColumn(1);
 //        column1.setMinWidth(300);
@@ -963,7 +1033,6 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
 //            }
 //        });
 //        this.jTable1.setDefaultRenderer(Object.class, new CellColorRenderer());
-        TableColumn column3 = this.jTable1.getColumnModel().getColumn(3);
         column3.setCellRenderer(new DefaultTableCellRenderer() {
 
             @Override
@@ -985,6 +1054,9 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
     private void loadSubVie(JTextField jTFSubFolderPath) {
         //Sub Eng exist and mapSentenceDto not null
         String line = null;
+        String result = "";
+        Integer key = 0;
+        SentenceDto sentenceDto = null;
         try {
 //            File f = new File(jTFSubFolderPath.getText());
             FileInputStream fileInputStream = null;
@@ -1000,10 +1072,14 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
                             return;
                         }
                         for (Map.Entry<Integer, SentenceDto> entry : mapSentenceDto.entrySet()) {
-                            Integer key = entry.getKey();
-                            SentenceDto value = entry.getValue();
-                            value.initContentTranslate(value.getContent().toString());
-                            value.compaireContent();
+                            key = entry.getKey();
+                            sentenceDto = entry.getValue();
+
+//                            result = translateLocal(sentenceDto.getContent().toString());
+//                            logger.debug(sentenceDto.getContent().toString() + " - Translate- " + result);
+                            result = sentenceDto.getContent().toString();
+                            sentenceDto.initContentTranslate(result);
+                            sentenceDto.compaireContent();
                         }
                         return;
                     case JOptionPane.NO_OPTION:
@@ -1013,8 +1089,11 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
                 }
             }
 
+//            Charset c = CharsetDetector.detectCharset(f);
+            Charset c = Charset.forName((String) jCboCharsetVieFile.getSelectedItem());
+
             InputStreamReader subFile = new InputStreamReader(
-                    fileInputStream, Charset.forName("UTF_16"));
+                    fileInputStream, c);
 //                    CharsetDetector.detectCharset(f));
             BufferedReader bufferedReader = new BufferedReader(subFile);
             if (mapSentenceDto == null) {
@@ -1092,10 +1171,13 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
         String line = null;
         try {
             File f = new File(jTFSubFolderPath.getText());
+            Charset c = CharsetDetector.detectCharset(f);
+            c = Charset.forName((String) jCboCharsetEngFile.getSelectedItem());
+
             InputStreamReader subFile = new InputStreamReader(
                     new FileInputStream(f),
                     //                    new FileInputStream(jTFSubFolderPath.getText()),
-                    CharsetDetector.detectCharset(f));
+                    c);
             BufferedReader bufferedReader = new BufferedReader(subFile);
 
             if (mapSentenceDto != null) {
@@ -1204,7 +1286,12 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
 
     private void writeToFile(String pathToFile, boolean isEng) {
         Path path = Paths.get(pathToFile);
-        Charset ENCODING = StandardCharsets.UTF_16;
+
+        Charset ENCODING = Charset.forName(
+                !isEng ? (String) jCboCharsetVieFile.getSelectedItem()
+                        : (String) jCboCharsetEngFile.getSelectedItem());
+
+//        Charset ENCODING = StandardCharsets.UTF_16;
         try {
             BufferedWriter writer = Files.newBufferedWriter(path, ENCODING);
             for (Map.Entry<Integer, SentenceDto> entry : mapSentenceDto.entrySet()) {
@@ -1307,22 +1394,62 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
         jTFSubEngFolderPath.setText(
                 GlobalVariables.folderEngReloadPath.equals("") ? GlobalVariables.folderSrt + "\\2The.Little.Hours.2017.720p.BluRay.X264-AMIABLE.srt" : GlobalVariables.folderEngReloadPath);
         sysConfig = daoSysConfig.getByKey(GlobalVariables.lastVieFolder_key);
+        File tempFile = new File(jTFSubEngFolderPath.getText());
+        Charset c = getFileCharset(tempFile);
+        jCboCharsetEngFile.setSelectedItem(c.displayName());
+        
         if (sysConfig != null) {
             GlobalVariables.folderVieReloadPath = sysConfig.getValue1();
         }
         jTFSubVieFolderPath.setText(
                 GlobalVariables.folderVieReloadPath.equals("") ? GlobalVariables.folderSrt + "\\The.Little.Hours.2017.720p.BluRay.X264-AMIABLE.srt" : GlobalVariables.folderVieReloadPath);
+        tempFile = new File(jTFSubVieFolderPath.getText());
+        c = getFileCharset(tempFile);
+        jCboCharsetVieFile.setSelectedItem(c.displayName());
     }
 
     private String getTranslatedSentence(Map<Integer, SentenceDto> mapSentenceDto) {
+
         String tranlatedSentencesStr = "";
-        for (Map.Entry<Integer, SentenceDto> entry : mapSentenceDto.entrySet()) {
-            Integer key = entry.getKey();
-            SentenceDto value = entry.getValue();
-            if (value.getIsTranslate()) {
-                tranlatedSentencesStr += value.getRowNumber() + GlobalVariables.separatorSemicolon;
+        if (mapSentenceDto != null) {
+            for (Map.Entry<Integer, SentenceDto> entry : mapSentenceDto.entrySet()) {
+                Integer key = entry.getKey();
+                SentenceDto value = entry.getValue();
+                if (value.getIsTranslate()) {
+                    tranlatedSentencesStr += value.getRowNumber() + GlobalVariables.separatorSemicolon;
+                }
             }
         }
         return tranlatedSentencesStr;
+    }
+
+    private void loadEncode() {
+        SortedMap<String, Charset> iterator = Charset.availableCharsets();
+        for (Map.Entry<String, Charset> entry : iterator.entrySet()) {
+            String key = entry.getKey();
+            Charset value = entry.getValue();
+            jCboCharsetEngFile.addItem(key);
+            jCboCharsetVieFile.addItem(key);
+//            logger.debug(">>>" + value);
+        }
+//        jCboCharsetEngFile.setSelectedItem(Charset.defaultCharset());
+//        jCboCharsetVieFile.setSelectedItem(StandardCharsets.UTF_16);
+    }
+
+    private String translateLocal(String sequence) {
+        String result = "";
+        try {
+            //1.
+//            result = jafregle.translate(sequence);
+            //2.
+//            GoogleTranslator translator = new GoogleTranslator();
+//            translator.setSrcLang(GoogleTranslator.LANGUAGE.ENGLISH);
+//            translator.setDestLang(GoogleTranslator.LANGUAGE.VIETNAMESE);
+            result = GoogleTranslator.sendGet(sequence);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return result;
+        }
+        return result;
     }
 }

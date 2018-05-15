@@ -35,6 +35,8 @@
     <mapping class= "org.vn.movieviewer.dto.MainGenre"/>
     <mapping class= "org.vn.movieviewer.dto.MainMovie"/>
     <mapping class= "org.vn.movieviewer.dto.SysUser"/>
+    <mapping class= "org.vn.movieviewer.dto.SysConfig"/>
+    <mapping class= "org.vn.movieviewer.dto.SysPermission"/>
 
   </session-factory>
 </hibernate-configuration>

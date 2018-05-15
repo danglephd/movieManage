@@ -1,0 +1,7 @@
+
+Chuy?n t? MySQL sang SQlite
+- Thêm tru?ng, c?t t? DB MySQL
+- migration ra db sqlite dùng ph?n m?m
+- chuy?n file các file mapping sang 
+- import data t? mySQL qua sqlite
+Chuy?n t? SQlite sang MySQL

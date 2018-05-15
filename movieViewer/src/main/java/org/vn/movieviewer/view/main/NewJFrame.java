@@ -30,8 +30,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.vn.movieviewer.config.GlobalVariables;
@@ -54,6 +56,8 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private static Logger logger = null;//Logger.getLogger(NewJFrame.class);
     private TableModelGeneral tableModelMovies;
+    private TableRowSorter tableRowSort;
+    private LoginDialog lgDialog = null;
 //    private List<MainMovie> lstImportMovies = null;
     private File[] listOfFiles = null;
     private Map<Integer, MainGenre> mapGenre = null;
@@ -62,12 +66,19 @@ public class NewJFrame extends javax.swing.JFrame {
     private int selectedRow = -1;
     private int[] selectedRows = null;
     boolean isUpdateGenres = false;
+    private SubtitleCompaireFrm subtitlefrm = null;
 //    private StarRater starRater = new StarRater(10);
 
     /**
      * Creates new form NewJFrame
      */
     public NewJFrame() {
+        lgDialog = new LoginDialog(this, true);
+        lgDialog.setLocationRelativeTo(null);
+        lgDialog.setVisible(true);
+    }
+    
+    public void Init(){
         initComponents();
         createConfigData();
         loadConfigure();
@@ -86,11 +97,11 @@ public class NewJFrame extends javax.swing.JFrame {
         setPanelEnabled(jPanel1, false);
         setPanelEnabled(jPanel3, true);
         
-        //tesst
-        
-        SubtitleCompaireFrm frm = new SubtitleCompaireFrm();
-        frm.setLocationRelativeTo(null);
-        frm.setVisible(true);
+//        //tesst
+//        
+//        SubtitleCompaireFrm frm = new SubtitleCompaireFrm();
+//        frm.setLocationRelativeTo(null);
+//        frm.setVisible(true);
     }
 
     /**
@@ -153,13 +164,13 @@ public class NewJFrame extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         jCBGenre = new javax.swing.JComboBox<>();
-        jButton7 = new javax.swing.JButton();
         jTFMovieNameSearch = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMIExit = new javax.swing.JMenuItem();
         jMINewMovies = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
@@ -541,10 +552,9 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jCBGenre.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jButton7.setText("Tìm");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+        jTFMovieNameSearch.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                jTFMovieNameSearchCaretUpdate(evt);
             }
         });
 
@@ -564,8 +574,6 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jCBGenre, 0, 155, Short.MAX_VALUE)
                     .addComponent(jTFMovieNameSearch))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton7)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -577,8 +585,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTFMovieNameSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton7))
+                    .addComponent(jTFMovieNameSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -613,6 +620,14 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
         jMenu1.add(jMINewMovies);
+
+        jMenuItem2.setText("Tìm phim");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
 
         jMenuBar1.add(jMenu1);
 
@@ -680,9 +695,9 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void jMINewMoviesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMINewMoviesActionPerformed
         // TODO add your handling code here:
-        LoadMovieFrm frm = new LoadMovieFrm(this, true, listOfFiles);
-        frm.setLocationRelativeTo(null);
-        frm.setVisible(true);
+        LoadMovieFrm loadMovieFrm = new LoadMovieFrm(this, true, listOfFiles);
+        loadMovieFrm.setLocationRelativeTo(null);
+        loadMovieFrm.setVisible(true);
 
         loadMoviesFromDatabase("");
     }//GEN-LAST:event_jMINewMoviesActionPerformed
@@ -759,9 +774,9 @@ public class NewJFrame extends javax.swing.JFrame {
     private void jBtAddGenreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtAddGenreActionPerformed
         // TODO add your handling code here:
 //        MainMovie movieSelected = lstImportMovies.get(selectedRow);
-        AddGenreDialog frm = new AddGenreDialog(this, true, mapGenre, jTPGenres.getText());
-        frm.setLocationRelativeTo(null);
-        frm.setVisible(true);
+        AddGenreDialog addGenreDialog = new AddGenreDialog(this, true, mapGenre, jTPGenres.getText());
+        addGenreDialog.setLocationRelativeTo(null);
+        addGenreDialog.setVisible(true);
         loadGenreInfo();
     }//GEN-LAST:event_jBtAddGenreActionPerformed
 
@@ -820,9 +835,9 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void jBtVoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtVoteActionPerformed
         // TODO add your handling code here:
-        VoteDialog frm = new VoteDialog(this, true);
-        frm.setLocationRelativeTo(null);
-        frm.setVisible(true);
+        VoteDialog voteDialog = new VoteDialog(this, true);
+        voteDialog.setLocationRelativeTo(null);
+        voteDialog.setVisible(true);
     }//GEN-LAST:event_jBtVoteActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -837,27 +852,6 @@ public class NewJFrame extends javax.swing.JFrame {
             viewMoviesInfo();
         }
     }//GEN-LAST:event_jButton6ActionPerformed
-
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
-        String selectedGenre = (String) jCBGenre.getSelectedItem();
-        String movieNameSearch = jTFMovieNameSearch.getText();
-        String conditions = "";
-
-        if (!selectedGenre.equals("Tất cả")) {
-            conditions = " where genres like '%" + selectedGenre + "%'";
-        }
-
-        if (!movieNameSearch.equals("")) {
-            if (conditions.equals("")) {
-                conditions += " where name like '%" + movieNameSearch + "%'";
-            } else {
-                conditions += " and name like '%" + movieNameSearch + "%'";
-            }
-        }
-
-        loadMoviesFromDatabase(conditions);
-    }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jCBSubtitleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCBSubtitleMouseClicked
         // TODO add your handling code here:
@@ -875,10 +869,28 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
-        SubtitleCompaireFrm frm = new SubtitleCompaireFrm();
-        frm.setLocationRelativeTo(null);
-        frm.setVisible(true);
+        if(subtitlefrm == null){
+            subtitlefrm = new SubtitleCompaireFrm();
+            subtitlefrm.setLocationRelativeTo(this);
+        }
+        subtitlefrm.setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jTFMovieNameSearchCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_jTFMovieNameSearchCaretUpdate
+        // TODO add your handling code here:                             
+        if (tableModelMovies.getRowCount() > 0) {
+            String text = jTFMovieNameSearch.getText();
+            tableRowSort.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+        }
+    }//GEN-LAST:event_jTFMovieNameSearchCaretUpdate
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+        
+        IMDbSearchDialog imdbDialog = new IMDbSearchDialog(this, true);
+        imdbDialog.setLocationRelativeTo(null);
+        imdbDialog.setVisible(true);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void loadNewMovieFromFolder(String filePath) {
         File folder = new File(filePath);
@@ -934,8 +946,16 @@ public class NewJFrame extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                new NewJFrame().setVisible(true);
+                JFrame frame = new NewJFrame();
+//                frame.getContentPane().setBackground(Color.BLACK);
+//                frame.setTitle("Logged In");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setLocationRelativeTo(null);
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                
+//                new NewJFrame().setVisible(true);
             }
         });
     }
@@ -1013,6 +1033,14 @@ public class NewJFrame extends javax.swing.JFrame {
                 return c;
             }
         });
+        tableRowSort = new TableRowSorter(tableModelMovies) {
+            @Override
+            public boolean isSortable(int column) {
+                return false;
+            }
+        ;
+        };
+        this.jTableMovies.setRowSorter(tableRowSort);
 
         this.jTableMovies.addMouseListener(new MouseAdapter() {
             @Override
@@ -1221,7 +1249,6 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
     private javax.swing.JComboBox<String> jCBGenre;
     private javax.swing.JCheckBox jCBSubtitle;
     private javax.swing.JCheckBox jCBWatched;
@@ -1248,6 +1275,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

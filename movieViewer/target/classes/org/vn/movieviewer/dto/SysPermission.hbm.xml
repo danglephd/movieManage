@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 12, 2018 11:14:16 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="org.vn.movieviewer.dto.SysPermission" table="sys_permission" optimistic-lock="version">
+        <id name="idsysPermission" type="java.lang.Integer">
+            <column name="idsys_permission" />
+            <generator class="identity" />
+        </id>
+        <property name="sysPermissionName" type="string">
+            <column name="sys_permission_name" length="45" not-null="true" />
+        </property>
+        <property name="dateCreate" type="date">
+            <column name="dateCreate" length="10" />
+        </property>
+    </class>
+</hibernate-mapping>

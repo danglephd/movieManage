@@ -26,6 +26,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 import org.vn.movieviewer.config.GlobalVariables;
+import org.vn.movieviewer.config.Utils;
 import org.vn.movieviewer.renderer.TableModelGeneral;
 import org.vn.movieviewer.dao.daoMainMovie;
 import org.vn.movieviewer.dto.MainMovie;
@@ -300,7 +301,7 @@ public class LoadMovieFrm extends javax.swing.JDialog {
                 moviesData = new Object[this.tableModelMovies.getColumnCount()];
                 moviesData[0] = tableModelMovies.getRowCount() + 1;
                 moviesData[1] = value.getName();
-                moviesData[2] = getImagePoster(value.getPath());
+                moviesData[2] = Utils.getImagePosterLocal(value.getPath());
                 moviesData[3] = value.getPath();
                 moviesData[4] = GlobalVariables.imgViewDetail;
                 moviesData[5] = GlobalVariables.imgDelete;
@@ -497,30 +498,6 @@ public class LoadMovieFrm extends javax.swing.JDialog {
         }
         );
         this.jTableMovies.setRowSorter(sorterDevice);
-    }
-
-    private ImageIcon getImagePoster(String pathSource) {
-        String imgPath = "";
-
-        File folder = new File(pathSource);
-        File[] listOfFiles = folder.listFiles();
-        if (listOfFiles == null || listOfFiles.length <= 0) {
-            return null;
-        }
-        for (File file : listOfFiles) {
-            if (file.isFile()) {
-                String mimetype = new MimetypesFileTypeMap().getContentType(file);
-                String type = mimetype.split("/")[0];
-                if (type.equals("image")) {
-                    imgPath = file.getPath();
-                    break;
-                }
-            }
-        }
-        if (imgPath.equals("")) {
-            return null;
-        }
-        return new ImageIcon(imgPath);
     }
 
     private List<MainMovie> getMainMovie(Map<String, MovieImportDto> lstImportMovie) {

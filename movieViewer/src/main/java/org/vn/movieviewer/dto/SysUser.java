@@ -1,5 +1,5 @@
 package org.vn.movieviewer.dto;
-// Generated Jan 17, 2018 10:54:29 AM by Hibernate Tools 4.3.1
+// Generated Apr 12, 2018 11:14:16 AM by Hibernate Tools 4.3.1
 
 
 import javax.persistence.Column;
@@ -14,7 +14,6 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="sys_user"
-    ,catalog="movies_db"
 )
 public class SysUser  implements java.io.Serializable {
 
