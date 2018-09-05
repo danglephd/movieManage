@@ -16,6 +16,13 @@ import org.vn.movieviewer.dto.MainMovie;
  */
 public class PagingTable {
 
+    /**
+     * @param pageOffset the pageOffset to set
+     */
+    public void setPageOffset(int pageOffset) {
+        this.pageOffset = pageOffset;
+    }
+
     public static int FIRST_PAGE = 1;
 
     private int pageOffset = 16;
@@ -23,16 +30,28 @@ public class PagingTable {
     private int curentPage;
     private int start;
     private int limit;
+    private int maxRow;
     private List<Integer> idList;
     protected List<Object> rowCache;
 
+    public PagingTable(int totalRow, List<Object> rowCache, int pagOffset){
+        this.curentPage = FIRST_PAGE;
+        this.start = 0;
+        this.maxRow = totalRow;
+        this.pageOffset = pagOffset;
+        this.totalPage = totalRow % this.pageOffset == 0 && totalRow > 0 ? totalRow / this.pageOffset : (totalRow / this.pageOffset) + 1;
+        this.rowCache = rowCache;  
+        this.limit = Math.min(this.curentPage * this.pageOffset, totalRow);      
+    }
+    
     public PagingTable(List<Integer> idList) {
         if (idList != null) {
             this.idList = idList;
             this.curentPage = FIRST_PAGE;
-            this.totalPage = idList.size() % this.pageOffset == 0 && !idList.isEmpty() ? idList.size() / this.pageOffset : (idList.size() / this.pageOffset) + 1;
+            this.maxRow = idList.size();
+            this.totalPage = this.maxRow % this.pageOffset == 0 && !idList.isEmpty() ? this.maxRow / this.pageOffset : (this.maxRow / this.pageOffset) + 1;
             this.start = 0;
-            this.limit = Math.min(this.curentPage * this.pageOffset, idList.size());
+            this.limit = Math.min(this.curentPage * this.pageOffset, this.maxRow);
             AddPageToRowCache();
         }
     }
@@ -47,13 +66,14 @@ public class PagingTable {
         PagingTable pagingTable = new PagingTable(daoMainMovie.getIDList("")) {//new ArrayList<Integer>()
         
             @Override
-            public void AddPageToRowCache() {
+            public boolean AddPageToRowCache() {
                 List<MainMovie> mainMovies = daoMainMovie.get(false, "", "", this.getStart(), this.getLimit());
                 this.rowCache.clear();
                 for (Iterator<MainMovie> iterator = mainMovies.iterator(); iterator.hasNext();) {
                     MainMovie next = iterator.next();
                     this.rowCache.add(next);
                 }
+                return true;
             }
         };
     }
@@ -63,7 +83,8 @@ public class PagingTable {
     }
 
     
-    public void AddPageToRowCache() {
+    public boolean AddPageToRowCache() {
+        return true;
     }
 
     /**
@@ -77,8 +98,12 @@ public class PagingTable {
         if (this.curentPage < this.getTotalPage()) {
             this.curentPage++;
             this.setStart((this.curentPage - 1) * this.getPageOffset());
-            this.limit = Math.min(this.curentPage * this.getPageOffset(), idList.size());
-            AddPageToRowCache();
+            this.limit = Math.min(this.curentPage * this.getPageOffset(), this.maxRow);
+            if(!AddPageToRowCache()){
+                this.curentPage--;
+                this.setStart((this.curentPage - 1) * this.getPageOffset());
+                this.limit = Math.min(this.curentPage * this.getPageOffset(), this.maxRow);
+            }
         }
     }
 
@@ -86,7 +111,7 @@ public class PagingTable {
         if (this.curentPage > FIRST_PAGE) {
             curentPage--;
             this.setStart((this.curentPage - 1) * this.getPageOffset());
-            this.limit = Math.min(this.curentPage * this.getPageOffset(), idList.size());
+            this.limit = Math.min(this.curentPage * this.getPageOffset(), this.maxRow);
             AddPageToRowCache();
         }
     }
@@ -98,7 +123,7 @@ public class PagingTable {
         if (this.curentPage >= FIRST_PAGE && this.curentPage <= this.getTotalPage()) {
             this.curentPage = curentPage;
             this.setStart((this.curentPage - 1) * this.getPageOffset());
-            this.limit = Math.min(this.curentPage * this.getPageOffset(), idList.size());
+            this.limit = Math.min(this.curentPage * this.getPageOffset(), this.maxRow);
             AddPageToRowCache();
         }
     }
@@ -132,7 +157,7 @@ public class PagingTable {
     }
     
     public int getTotalRow(){
-        return idList == null ? 0 : idList.size();
+        return idList == null ? 0 : this.maxRow;
     }
 
     /**

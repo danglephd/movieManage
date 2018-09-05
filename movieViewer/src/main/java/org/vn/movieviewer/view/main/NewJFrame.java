@@ -31,6 +31,8 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
@@ -67,6 +69,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private int[] selectedRows = null;
     boolean isUpdateGenres = false;
     private SubtitleCompaireFrm subtitlefrm = null;
+    private String sortStr = "genres ASC";
 //    private StarRater starRater = new StarRater(10);
 
     /**
@@ -77,8 +80,8 @@ public class NewJFrame extends javax.swing.JFrame {
         lgDialog.setLocationRelativeTo(null);
         lgDialog.setVisible(true);
     }
-    
-    public void Init(){
+
+    public void Init() {
         initComponents();
         createConfigData();
         loadConfigure();
@@ -96,7 +99,7 @@ public class NewJFrame extends javax.swing.JFrame {
         initFormView();
         setPanelEnabled(jPanel1, false);
         setPanelEnabled(jPanel3, true);
-        
+
 //        //tesst
 //        
 //        SubtitleCompaireFrm frm = new SubtitleCompaireFrm();
@@ -869,7 +872,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
-        if(subtitlefrm == null){
+        if (subtitlefrm == null) {
             subtitlefrm = new SubtitleCompaireFrm();
             subtitlefrm.setLocationRelativeTo(this);
         }
@@ -886,7 +889,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // TODO add your handling code here:
-        
+
         IMDbSearchDialog imdbDialog = new IMDbSearchDialog(this, true);
         imdbDialog.setLocationRelativeTo(null);
         imdbDialog.setVisible(true);
@@ -954,7 +957,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setLocationRelativeTo(null);
                 frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                
+
 //                new NewJFrame().setVisible(true);
             }
         });
@@ -1036,10 +1039,23 @@ public class NewJFrame extends javax.swing.JFrame {
         tableRowSort = new TableRowSorter(tableModelMovies) {
             @Override
             public boolean isSortable(int column) {
+//                if (column == 1) {
+//                    return true;
+//                }
                 return false;
             }
-        ;
+
         };
+//        tableRowSort.addRowSorterListener(new RowSorterListener() {
+//            @Override
+//            public void sorterChanged(RowSorterEvent e) {
+//                logger.debug(e);
+//                sortStr = "name DESC";
+//                pagingTable.AddPageToRowCache();
+//            } 
+//        });
+//        this.tableRowSort.setSortable(1, true);
+        this.jTableMovies.setAutoCreateRowSorter(true);
         this.jTableMovies.setRowSorter(tableRowSort);
 
         this.jTableMovies.addMouseListener(new MouseAdapter() {
@@ -1133,23 +1149,24 @@ public class NewJFrame extends javax.swing.JFrame {
 //                starRater.setBounds(0, 0, 150, 20);
 //            String[] arrayIdGenreByStr = null;
             Double rating = 0.0d;
+            try {
 
-            for (int i = 0; i < moviesList.size(); i++) {
-                rating = 0.0d;
-                moviesData = new Object[this.tableModelMovies.getColumnCount()];
+                for (int i = 0; i < moviesList.size(); i++) {
+                    rating = 0.0d;
+                    moviesData = new Object[this.tableModelMovies.getColumnCount()];
 //                StarRater starRater = new StarRater(10, moviesList.get(i).getStart() != null ? moviesList.get(i).getStart() : 0);
 //                starRater.setBounds(0, 0, 180, 20);
-                MainMovie mainMovie = (MainMovie) moviesList.get(i);
+                    MainMovie mainMovie = (MainMovie) moviesList.get(i);
 //                String[] arrayIdGenreById = (mainMovie.getGenres() == null || mainMovie.getGenres().equals("")) ? null : mainMovie.getGenres().split(GlobalVariables.separatorComa);
 //                arrayIdGenreByStr = != null && mapGenre != null && mapGenre.containsKey(mainMovie.getIdgenre()) ? mainMovie.getIdgenre() : -1;
-                moviesData[0] = i + start + 1;
-                moviesData[1] = mainMovie.getName();
-                if (mainMovie.getItotalScore() != null && mainMovie.getIvote() != null
-                        && mainMovie.getItotalScore() > 0 && mainMovie.getIvote() > 0) {
-                    rating = mainMovie.getItotalScore().doubleValue() / mainMovie.getIvote().doubleValue();
-                }
+                    moviesData[0] = i + start + 1;
+                    moviesData[1] = mainMovie.getName();
+                    if (mainMovie.getItotalScore() != null && mainMovie.getIvote() != null
+                            && mainMovie.getItotalScore() > 0 && mainMovie.getIvote() > 0) {
+                        rating = mainMovie.getItotalScore().doubleValue() / mainMovie.getIvote().doubleValue();
+                    }
 
-                moviesData[2] = GlobalVariables.df.format(rating);
+                    moviesData[2] = GlobalVariables.df.format(rating);
 //                if (arrayIdGenreById != null && arrayIdGenreById.length > 0
 //                        && mapGenre != null && mapGenre.size() > 0) {
 //                    String stringGenres = "";
@@ -1158,11 +1175,14 @@ public class NewJFrame extends javax.swing.JFrame {
 //                    }
 //                    moviesData[3] = stringGenres;
 //                }
-                moviesData[3] = mainMovie.getGenres();
-                moviesData[4] = mainMovie.getCreateDate() != null ? mainMovie.getCreateDate() : "";
-                moviesData[5] = mainMovie.getSubtitle() == null || !mainMovie.getSubtitle() ? "Không có" : "Có";
-                moviesData[6] = mainMovie.getIsWatched() == null || !mainMovie.getIsWatched() ? "Chưa xem" : "Đã xem";
-                tableModelMovies.addRow(moviesData);
+                    moviesData[3] = mainMovie.getGenres();
+                    moviesData[4] = mainMovie.getCreateDate() != null ? mainMovie.getCreateDate() : "";
+                    moviesData[5] = mainMovie.getSubtitle() == null || !mainMovie.getSubtitle() ? "Không có" : "Có";
+                    moviesData[6] = mainMovie.getIsWatched() == null || !mainMovie.getIsWatched() ? "Chưa xem" : "Đã xem";
+                    tableModelMovies.addRow(moviesData);
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
             }
         }
         jTableMovies.updateUI();
@@ -1170,7 +1190,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void createConfigData() {
         try {
-            
+
             File logConfig = new File(System.getProperty("user.dir") + File.separator + "log4j.properties");
             if (!logConfig.exists()) {
                 InputStream resource = NewJFrame.class.getClassLoader().getResourceAsStream("ConfigFile/log4j.properties");
@@ -1190,7 +1210,7 @@ public class NewJFrame extends javax.swing.JFrame {
                     }
                 }
             }
-            
+
             File hibernateCfg = new File(System.getProperty("user.dir") + File.separator + "hibernate.cfg.xml");
             if (!hibernateCfg.exists()) {
                 InputStream resource = NewJFrame.class.getClassLoader().getResourceAsStream("ConfigFile/hibernate.cfg.xml");
@@ -1301,13 +1321,12 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void loadMoviesFromDatabase(String conditions) {
         //load list Movies
-        String sortStr = "genres ASC";
         this.pagingTable = null;
         this.pagingTable = new PagingTable(daoMainMovie.getIDList(conditions)) {//new ArrayList<Integer>()
 //        this.pagingTable = new PagingTable(null) {//new ArrayList<Integer>()
 
             @Override
-            public void AddPageToRowCache() {
+            public boolean AddPageToRowCache() {
                 List<MainMovie> mainMovies = daoMainMovie.get(true, conditions, sortStr, this.getStart(), this.getPageOffset());
                 if (this.rowCache != null) {
                     this.rowCache.clear();
@@ -1318,6 +1337,7 @@ public class NewJFrame extends javax.swing.JFrame {
                     MainMovie next = iterator.next();
                     this.rowCache.add(next);
                 }
+                return true;
             }
         };
 //        lstImportMovies = (List<MainMovie>)this.pagingTable.getRowCache();
@@ -1467,7 +1487,7 @@ public class NewJFrame extends javax.swing.JFrame {
             jLRating.setText(GlobalVariables.df.format(rating) + " | Votes: " + numVote);
         }
     }
-    
+
     private void loadConfigure() {
         try {
 
@@ -1477,12 +1497,11 @@ public class NewJFrame extends javax.swing.JFrame {
 
             logger.info("Tải cấu hình....");
 
-
             logger.info("Kết thúc tải cấu hình.");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             logger.error("Tải cấu hình bị lỗi.....");
         }
     }
-    
+
 }

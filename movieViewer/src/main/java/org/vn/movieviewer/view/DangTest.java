@@ -1,8 +1,12 @@
 package org.vn.movieviewer.view;
 
-import com.jafregle.Jafregle;
-import com.jafregle.Language;
+import com.google.gson.JsonElement;
 import java.awt.Component;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -10,8 +14,8 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import org.vn.movieviewer.dto.MovieIMDbDto;
-import org.vn.movieviewer.view.GoogleTranslator.LANGUAGE;
+import org.vn.movieviewer.config.JsonUtils;
+import org.vn.movieviewer.controller.APIRequest;
 
 public class DangTest {
 
@@ -92,15 +96,42 @@ public class DangTest {
 //                    String data = translator.sendGet(strtotran);
 ////                    String data = translator.translate(strtotran);
 //                    System.out.println(data);
-                    String iMDB_APIKey = "faeb0cf9";
-                    IMDbAPI imdapi = new IMDbAPI();
-                    MovieIMDbDto movieIMDbDto = imdapi.searchByTitle("Peter Rabbit", 2018, "short");
-//                    System.out.println(result);
+//                    String iMDB_APIKey = "faeb0cf9";
+//                    IMDbAPI imdapi = new IMDbAPI();
+////                    MovieIMDbDto movieIMDbDto = imdapi.searchByTitle("Peter Rabbit", 2018, "short");
+//                    IMDbResponseSearchDto searchIMDbDto = imdapi.search("Peter", IMDbAPI.TYPE_MOVIE, 0, 0);
                     
+                    getLstPopulationCountry();
+
+//                    System.out.println(result);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
+    }
+    
+    private static void getLstPopulationCountry(){
+        try {
+            APIRequest request = new APIRequest();
+            String worldPopulationUrl = "http://api.population.io/1.0/";
+            request.setsURLRequest(worldPopulationUrl);
+            Map<String, Object> params = new HashMap<>();
+            params.put("countries", "");
+            params.put("?format=", "json");
+            JsonElement jsonElement = request.callAPIbyGET(params);
+            Map<String, ArrayList<String>> jsonObject = JsonUtils.jSon2Object(jsonElement, Map.class);
+//            JsonArray elementArray = jsonElement.getAsString();
+            List<String> countries = jsonObject.get("countries");
+            for (Iterator<String> iterator = countries.iterator(); iterator.hasNext();) {
+                String next = iterator.next();
+                System.out.println("-"+ next);
+                
+            }
+            
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        
     }
 }

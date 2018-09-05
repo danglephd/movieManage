@@ -5,19 +5,44 @@
  */
 package org.vn.movieviewer.view.main;
 
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.InputVerifier;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
+import org.apache.log4j.Logger;
+import org.vn.movieviewer.config.GlobalVariables;
 import org.vn.movieviewer.config.Utils;
+import org.vn.movieviewer.dto.IMDbResponseSearchDto;
+import org.vn.movieviewer.dto.IMDbSearchDto;
 import org.vn.movieviewer.dto.MovieIMDbDto;
+import org.vn.movieviewer.renderer.PagingTable;
 import org.vn.movieviewer.view.IMDbAPI;
 import org.vn.movieviewer.renderer.StarRater;
+import org.vn.movieviewer.renderer.TableModelGeneral;
 
 /**
  *
  * @author danglph
  */
 public class IMDbSearchDialog extends javax.swing.JDialog {
-    private String iMDB_APIKey = "faeb0cf9";   
+
+    private String iMDB_APIKey = "faeb0cf9";
     private IMDbAPI imdapi = new IMDbAPI();
     private org.vn.movieviewer.renderer.StarRater starRater1;
+    private TableModelGeneral tableModelIMDbSearch;
+    private PagingTable pagingTable;
+    private int selectedRow = -1;
+    private static Logger logger = Logger.getLogger(IMDbSearchDialog.class);
 
     /**
      * Creates new form IMDbSearchDialog
@@ -25,7 +50,18 @@ public class IMDbSearchDialog extends javax.swing.JDialog {
     public IMDbSearchDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        jTFYear.setInputVerifier(Utils.fieldYearReleaseVerifier);
+        Init();
+    }
+
+    private void Init() {
+//        jTFYear.setInputVerifier(Utils.fieldYearReleaseVerifier);
+//        exampleStar();
+        String[] columnNames = {
+            "STT", "Tên phim", "Năm phát hành"
+        };
+        initTableListenner(columnNames);
+        initFormView();
+
     }
 
     /**
@@ -44,8 +80,11 @@ public class IMDbSearchDialog extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jLbError = new javax.swing.JLabel();
-        jLImage = new javax.swing.JLabel();
-        jLTitle = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
+        jCBSearchType = new javax.swing.JComboBox<>();
+        jLabel3 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
         jLYear = new javax.swing.JLabel();
         jLRated = new javax.swing.JLabel();
         jLGen1 = new javax.swing.JLabel();
@@ -55,8 +94,21 @@ public class IMDbSearchDialog extends javax.swing.JDialog {
         jLOffice = new javax.swing.JLabel();
         jLGen3 = new javax.swing.JLabel();
         jLProduccer = new javax.swing.JLabel();
+        jLImage = new javax.swing.JLabel();
         jLGen4 = new javax.swing.JLabel();
+        jLTitle = new javax.swing.JLabel();
         jLRuntime = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTableIMDBMovies = new javax.swing.JTable();
+        jPanel4 = new javax.swing.JPanel();
+        jTFCurrentPage = new javax.swing.JTextField();
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
+        jLTotalPages = new javax.swing.JLabel();
+        jLDataFrom = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -64,6 +116,7 @@ public class IMDbSearchDialog extends javax.swing.JDialog {
 
         jLabel1.setText("Tiêu đề");
 
+        jTFYear.setText("2018");
         jTFYear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTFYearActionPerformed(evt);
@@ -81,50 +134,76 @@ public class IMDbSearchDialog extends javax.swing.JDialog {
 
         jLbError.setForeground(new java.awt.Color(255, 0, 0));
 
+        jButton3.setText("Tìm phim khác");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jCBSearchType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Phim lẻ", "Phim bộ", "Phần", " " }));
+
+        jLabel3.setText("Thể loại");
+
+        jButton2.setText("Tìm kiếm");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTFTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton2)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLbError, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTFYear, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTFTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTFYear)
+                            .addComponent(jCBSearchType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLbError, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTFTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                .addGap(12, 12, 12)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jTFTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1))
+                    .addComponent(jLbError, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTFYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jCBSearchType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLbError, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton3)
+                    .addComponent(jButton2))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        jLImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLImage.setText("Poster");
-
-        jLTitle.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        jLTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLTitle.setText("Tựa phim");
 
         jLYear.setForeground(new java.awt.Color(102, 102, 102));
         jLYear.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -152,76 +231,213 @@ public class IMDbSearchDialog extends javax.swing.JDialog {
         jLProduccer.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLProduccer.setText("Nhà sản xuất:");
 
+        jLImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLImage.setText("Poster");
+        jLImage.setBorder(new javax.swing.border.MatteBorder(null));
+
         jLGen4.setText("Thời lượng:");
+
+        jLTitle.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        jLTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLTitle.setText("Tựa phim");
 
         jLRuntime.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLRuntime.setText("Thời lượng");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLImage, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLYear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLGen1, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1)
-                            .addComponent(jLRated, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLGen2)
-                                    .addComponent(jLGen3))
-                                .addGap(10, 10, 10)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLOffice, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
-                                    .addComponent(jLProduccer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLGen4, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLRuntime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(6, 6, 6)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLGen2)
+                            .addComponent(jLGen3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLProduccer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLOffice, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLYear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLGen1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
+                    .addComponent(jLRated, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLGen4, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLRuntime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(6, 6, 6)))
                 .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLImage, javax.swing.GroupLayout.PREFERRED_SIZE, 444, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLYear)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLRated, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLGen4, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLRuntime))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLGen1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLOffice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLGen2, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLGen2, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLOffice))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLGen3)
-                            .addComponent(jLProduccer))))
-                .addGap(0, 87, Short.MAX_VALUE))
+                            .addComponent(jLProduccer)))
+                    .addComponent(jLImage, javax.swing.GroupLayout.PREFERRED_SIZE, 444, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTableIMDBMovies.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3"
+            }
+        ));
+        jScrollPane2.setViewportView(jTableIMDBMovies);
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
+        jTFCurrentPage.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jTFCurrentPage.setText("2");
+
+        jButton4.setText("<");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jButton5.setText("|<<");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        jButton6.setText(">");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
+        jButton7.setText(">>|");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
+        jLTotalPages.setText("/10");
+        jLTotalPages.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLDataFrom.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLDataFrom.setText("Dữ liệu từ");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(2, 2, 2)
+                .addComponent(jButton5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTFCurrentPage, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLTotalPages, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLDataFrom, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(134, 134, 134))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLTotalPages, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton4)
+                        .addComponent(jTFCurrentPage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLDataFrom, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton7)
+                        .addComponent(jButton6)
+                        .addComponent(jButton5))))
+        );
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 404, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 466, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(2, 2, 2)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -229,10 +445,14 @@ public class IMDbSearchDialog extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        if (jTFYear.getText().equals("")) {
+            jLbError.setText("Năm phát hành phải lớn hơn 1900 và nhỏ hơn 3000.");
+            return;
+        }
         MovieIMDbDto movieIMDbDto = imdapi.searchByTitle(jTFTitle.getText(), Integer.parseInt(jTFYear.getText()), "short");
-        if(movieIMDbDto == null){
+        if (movieIMDbDto == null) {
             jLbError.setText("Không tìm thấy kết quả.");
-        }else{
+        } else {
             jLbError.setText("");
             ShowMovieInfo(movieIMDbDto);
         }
@@ -241,6 +461,97 @@ public class IMDbSearchDialog extends javax.swing.JDialog {
     private void jTFYearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTFYearActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTFYearActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        String type = getType(jCBSearchType.getSelectedItem().toString());
+        Integer year = Integer.parseInt(jTFYear.getText().length() >= 4 ? jTFYear.getText() : "0");
+        IMDbResponseSearchDto searchIMDbDto = imdapi.search(jTFTitle.getText(), type, year, 0);
+        if (searchIMDbDto != null && searchIMDbDto.getResponse().equals(IMDbResponseSearchDto.SUCCESS)) {
+            this.pagingTable = null;
+            int totalRows = searchIMDbDto.getTotalResults().equals("") ? 0
+                    : Integer.parseInt(searchIMDbDto.getTotalResults());
+            List<Object> lstSearchMovieResult = null;
+            IMDbSearchDto[] search = searchIMDbDto.getSearch();
+            for (int i = 0; i < search.length; i++) {
+                Object object = search[i];
+                if (lstSearchMovieResult == null) {
+                    lstSearchMovieResult = new ArrayList<>();
+                }
+                lstSearchMovieResult.add(object);
+            }
+            this.pagingTable = new PagingTable(totalRows, lstSearchMovieResult, totalRows > search.length ? search.length : totalRows) {//new ArrayList<Integer>()
+
+                @Override
+                public boolean AddPageToRowCache() {
+                    IMDbResponseSearchDto searchIMDbDto = imdapi.search(jTFTitle.getText(), type, year, this.getCurentPage());
+                    if (searchIMDbDto != null && searchIMDbDto.getResponse().equals(IMDbResponseSearchDto.SUCCESS)) {
+                        if (this.rowCache != null) {
+                            this.rowCache.clear();
+                        } else {
+                            this.rowCache = new ArrayList<>();
+                        }
+                        IMDbSearchDto[] search = searchIMDbDto.getSearch();
+                        for (int i = 0; i < search.length; i++) {
+                            Object object = search[i];
+                            this.rowCache.add(object);
+                        }
+                        return true;
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Đã có lỗi xảy ra. Vui lòng thử lại.");
+                        return false;
+//                        jLbError.setText("Đã có lỗi xảy ra. Vui lòng thử lại.");
+                    }
+                }
+            };
+            initTableDataType(this.pagingTable.getRowCache(), this.pagingTable.getStart());
+            updatePagingView();
+        } else {
+            jLbError.setText(searchIMDbDto.getError());
+        }
+
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+//        this.pagingTable.prevPage();
+//        initTableDataType(this.pagingTable.getRowCache(), this.pagingTable.getStart());
+//        updatePagingView();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+//        if (this.pagingTable.getCurentPage() != PagingTable.FIRST_PAGE) {
+//            this.pagingTable.setCurentPage(PagingTable.FIRST_PAGE);
+//            initTableDataType(this.pagingTable.getRowCache(), this.pagingTable.getStart());
+//            updatePagingView();
+//        }
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+        try {
+            this.pagingTable.nextPage();
+            initTableDataType(this.pagingTable.getRowCache(), this.pagingTable.getStart());
+            updatePagingView();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+//        if (this.pagingTable.getCurentPage() != this.pagingTable.getTotalPage()) {
+//            this.pagingTable.setCurentPage(this.pagingTable.getTotalPage());
+//            initTableDataType(this.pagingTable.getRowCache(), this.pagingTable.getStart());
+//            updatePagingView();
+//        }
+    }//GEN-LAST:event_jButton7ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -286,6 +597,14 @@ public class IMDbSearchDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JComboBox<String> jCBSearchType;
+    private javax.swing.JLabel jLDataFrom;
     private javax.swing.JLabel jLGen1;
     private javax.swing.JLabel jLGen2;
     private javax.swing.JLabel jLGen3;
@@ -296,15 +615,23 @@ public class IMDbSearchDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLRated;
     private javax.swing.JLabel jLRuntime;
     private javax.swing.JLabel jLTitle;
+    private javax.swing.JLabel jLTotalPages;
     private javax.swing.JLabel jLYear;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLbError;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTAPlot;
+    private javax.swing.JTextField jTFCurrentPage;
     private javax.swing.JTextField jTFTitle;
     private javax.swing.JTextField jTFYear;
+    private javax.swing.JTable jTableIMDBMovies;
     // End of variables declaration//GEN-END:variables
 
     private void ShowMovieInfo(MovieIMDbDto movieIMDbDto) {
@@ -312,11 +639,195 @@ public class IMDbSearchDialog extends javax.swing.JDialog {
         jLYear.setText("(" + movieIMDbDto.getYear() + ")");
         jLTitle.setText(movieIMDbDto.getTitle());
         jLRated.setText(String.format("%s | %s | %s", movieIMDbDto.getRated(),
-                                        movieIMDbDto.getGenre(),
-                                        movieIMDbDto.getReleased()));
+                movieIMDbDto.getGenre(),
+                movieIMDbDto.getReleased()));
         jLRuntime.setText(movieIMDbDto.getRuntime());
         jTAPlot.setText(movieIMDbDto.getPlot());
         jLOffice.setText(movieIMDbDto.getBoxOffice());
         jLProduccer.setText(movieIMDbDto.getProduction());
-   }
+    }
+
+    private void initTableListenner(String[] columnNames) {
+        //init tableview
+
+        this.tableModelIMDbSearch = new TableModelGeneral(columnNames) {
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+//            "STT", "Tên phim", "Năm phát hành"
+                Class clazz = Object.class;
+                switch (columnIndex) {
+                    case 1:
+                        clazz = StarRater.class;
+                        break;
+//                    case 2:
+//                        clazz = Date.class;
+//                        break;
+//                    case 5:
+//                        clazz = ImageIcon.class;
+//                        break;
+
+                }
+                return clazz;
+            }
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == -1;
+            }
+
+//            @Override
+//            public int getRowCount() {
+//                return daoMainMovie.getRowCount();
+//            }
+        };
+        this.jTableIMDBMovies.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        this.jTableIMDBMovies.setModel(tableModelIMDbSearch);
+        this.jTableIMDBMovies.setRowHeight(30);
+
+        TableColumn column1 = this.jTableIMDBMovies.getColumnModel().getColumn(1);
+        column1.setMinWidth(250);
+        column1.setCellRenderer(new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value,
+                    boolean isSelected, boolean hasFocus,
+                    int row, int column) {
+                JLabel c = (JLabel) super.getTableCellRendererComponent(table, value,
+                        isSelected, hasFocus,
+                        row, column);/// params from above 
+                int rowAfterSorted = table.convertRowIndexToModel(row);
+//                Integer idMovie = (Integer)table.getModel().getValueAt(rowAfterSorted, 5);
+                IMDbSearchDto mainMovie = (IMDbSearchDto) pagingTable.getByRow(rowAfterSorted);
+                String url = mainMovie.getPoster();
+                if (url == null) {
+                    url = "";
+                }
+                String html
+                        = "<html><body>"
+                        + "<img src='"
+                        //                        + "https://images-na.ssl-images-amazon.com/images/M/MV5BMzMxMTFlMDYtNjIyNS00YzQ4LWJlMDAtNGQwY2RlZGJiMmM1XkEyXkFqcGdeQXVyNzEyMTA5MTU@._V1_SY1000_SX700_AL_.jpg"
+                        + url
+                        + "'  width=240 height=320> ";
+                c.setToolTipText(html + "<br/>"
+                        + "</body></html>");
+                return c;
+            }
+        });
+//        tableRowSort = new TableRowSorter(tableModelIMDbSearch) {
+//            @Override
+//            public boolean isSortable(int column) {
+//                return false;
+//            }
+//        };
+//        this.jTableIMDBMovies.setRowSorter(tableRowSort);
+
+        this.jTableIMDBMovies.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent me) {
+                JTable table = (JTable) me.getSource();
+                Point p = me.getPoint();
+                int row = table.rowAtPoint(p);
+                int rowAfterSorted = table.convertRowIndexToModel(row);
+                int col = table.columnAtPoint(p);
+
+                if (me.getClickCount() == 2) {
+//                    lstImportMovies.
+                    selectedRow = rowAfterSorted;
+//                    selectedRows = null;
+                    IMDbSearchDto movieSelected = (IMDbSearchDto) pagingTable.getByRow(selectedRow);
+                    MovieIMDbDto movieIMDbDto = imdapi.searchByTitle(movieSelected.getTitle(), Integer.parseInt(movieSelected.getYear()), "short");
+                    ShowMovieInfo(movieIMDbDto);
+                }
+
+//                if (col == 0) {
+//                    table.getModel().setValueAt(!(boolean) table.getModel().getValueAt(rowAfterSorted, 0), rowAfterSorted, 0);
+//                }
+            }
+        });
+    }
+
+    private void initFormView() {
+//        jTFYear.setInputVerifier(Utils.fieldYearReleaseVerifier);
+        jTFCurrentPage.setInputVerifier(new InputVerifier() {
+            @Override
+            public boolean verify(JComponent input) {
+                JTextField temp = (JTextField) input;
+                try {
+                    int number = Integer.parseInt(temp.getText());
+                    if (number < PagingTable.FIRST_PAGE) {
+                        JOptionPane.showMessageDialog(null, "Trang phải lớn hơn hoặc bằng " + PagingTable.FIRST_PAGE);
+                        return false;
+                    } else if (number > pagingTable.getTotalPage()) {
+                        JOptionPane.showMessageDialog(null, "Trang phải nhỏ hơn hoặc bằng " + pagingTable.getTotalPage());
+                        return false;
+                    }
+                    return true;
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Chỉ được nhập số!");
+                }
+                return false;
+            }
+        });
+//        starRater1.set
+    }
+
+    private String getType(String typeByDisplay) {
+        String type = "";
+//        Phim lẻ
+//Phim bộ
+//Phần
+//movie, series, episode
+
+        switch (typeByDisplay) {
+            case "Phim lẻ":
+                type = "movie";
+                break;
+            case "Phim bộ":
+                type = "series";
+                break;
+            case "Phần":
+                type = "episode";
+                break;
+        }
+        return type;
+    }
+
+    private void updatePagingView() {
+        this.jLTotalPages.setText("/" + this.pagingTable.getTotalPage());
+        this.jTFCurrentPage.setText(this.pagingTable.getCurentPage() + "");
+        if (this.pagingTable.getTotalPage() == 0) {
+            this.jLDataFrom.setText("Không có dữ liệu");
+        } else {
+            this.jLDataFrom.setText("");
+        }
+    }
+
+    private void initTableDataType(List<Object> moviesList, int start) {
+        this.tableModelIMDbSearch.getDataVector().removeAllElements();
+        if (moviesList != null && !moviesList.isEmpty()) {
+            Object[] moviesData = null;
+//            Double rating = 0.0d;
+
+            for (int i = 0; i < moviesList.size(); i++) {
+//                rating = 0.0d;
+                moviesData = new Object[this.tableModelIMDbSearch.getColumnCount()];
+                IMDbSearchDto mainMovie = (IMDbSearchDto) moviesList.get(i);
+                moviesData[0] = i + start + 1;
+                moviesData[1] = mainMovie.getTitle();
+//                if (mainMovie.getItotalScore() != null && mainMovie.getIvote() != null
+//                        && mainMovie.getItotalScore() > 0 && mainMovie.getIvote() > 0) {
+//                    rating = mainMovie.getItotalScore().doubleValue() / mainMovie.getIvote().doubleValue();
+//                }
+
+                moviesData[2] = mainMovie.getYear();
+//                moviesData[3] = mainMovie.getGenres();
+//                moviesData[4] = mainMovie.getCreateDate() != null ? mainMovie.getCreateDate() : "";
+//                moviesData[5] = mainMovie.getSubtitle() == null || !mainMovie.getSubtitle() ? "Không có" : "Có";
+//                moviesData[6] = mainMovie.getIsWatched() == null || !mainMovie.getIsWatched() ? "Chưa xem" : "Đã xem";
+                this.tableModelIMDbSearch.addRow(moviesData);
+            }
+        }
+        this.jTableIMDBMovies.updateUI();
+    }
 }

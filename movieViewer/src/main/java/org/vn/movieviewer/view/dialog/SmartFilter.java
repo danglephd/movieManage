@@ -563,7 +563,7 @@ public class SmartFilter extends javax.swing.JDialog {
 //        this.pagingTable = new PagingTable(null) {//new ArrayList<Integer>()
 
             @Override
-            public void AddPageToRowCache() {
+            public boolean AddPageToRowCache() {
                 List<EditorSentenceDto> lstSequenceInPage = editorSentenceGet(this.getStart(), this.getPageOffset(), mapEditorSentenceDto);
                 if (this.rowCache != null) {
                     this.rowCache.clear();
@@ -574,6 +574,7 @@ public class SmartFilter extends javax.swing.JDialog {
                     EditorSentenceDto next = iterator.next();
                     this.rowCache.add(next);
                 }
+                return true;
             }
         };
 //        lstImportMovies = (List<MainMovie>)this.pagingTable.getRowCache();

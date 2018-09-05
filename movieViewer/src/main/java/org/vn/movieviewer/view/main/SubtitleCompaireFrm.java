@@ -769,7 +769,7 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
 //        this.pagingTable = new PagingTable(null) {//new ArrayList<Integer>()
 
             @Override
-            public void AddPageToRowCache() {
+            public boolean AddPageToRowCache() {
                 List<SentenceDto> lstSequenceInPage = daoSubtitleGet(true, "", "", this.getStart(), this.getPageOffset(), lstSentenceDto);
                 if (this.rowCache != null) {
                     this.rowCache.clear();
@@ -780,6 +780,7 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
                     SentenceDto next = iterator.next();
                     this.rowCache.add(next);
                 }
+                return true;
             }
         };
 //        lstImportMovies = (List<MainMovie>)this.pagingTable.getRowCache();

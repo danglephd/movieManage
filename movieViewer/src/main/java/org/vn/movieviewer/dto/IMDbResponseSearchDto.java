@@ -9,287 +9,79 @@ package org.vn.movieviewer.dto;
  *
  * @author danglph
  */
-public class MovieIMDbDto {
-    private String Title;
-    private String Year;
-    private String Rated;
-    private String Released;
-    private String Runtime;
-    private String Genre;
-    private String Director;
-    private String Writer;
-    private String Actors;
-    private String Plot;
-    private String Language;
-    private String Country;
-    private String Poster;
-//    private String Ratings;
-    private String imdbRating;
-    private String imdbVotes;
-    private String BoxOffice;
-    private String Production;
-
-    public MovieIMDbDto() {
-    }
-
-    public MovieIMDbDto(String Title, String Year, String Rated, String Released, String Runtime, String Genre, String Director, String Writer, String Actors, String Plot, String Language, String Country, String Poster, String Ratings, String imdbRating, String imdbVotes, String BoxOffice, String Production) {
-        this.Title = Title;
-        this.Year = Year;
-        this.Rated = Rated;
-        this.Released = Released;
-        this.Runtime = Runtime;
-        this.Genre = Genre;
-        this.Director = Director;
-        this.Writer = Writer;
-        this.Actors = Actors;
-        this.Plot = Plot;
-        this.Language = Language;
-        this.Country = Country;
-        this.Poster = Poster;
-//        this.Ratings = Ratings;
-        this.imdbRating = imdbRating;
-        this.imdbVotes = imdbVotes;
-        this.BoxOffice = BoxOffice;
-        this.Production = Production;
-    }
+public class IMDbResponseSearchDto {
+    public static String SUCCESS = "True";
+    public static String FAIL = "False";
     
-    
+    private String Response;
+    private String totalResults;
+    private String Error;
+    private IMDbSearchDto[] Search;
 
-    /**
-     * @return the Title
-     */
-    public String getTitle() {
-        return Title;
+    public IMDbResponseSearchDto(String Response, String totalResults, String Error, IMDbSearchDto[] Search) {
+        this.Response = Response;
+        this.totalResults = totalResults;
+        this.Error = Error;
+        this.Search = Search;
+    }
+
+    public IMDbResponseSearchDto() {
     }
 
     /**
-     * @return the Year
+     * @return the Response
      */
-    public String getYear() {
-        return Year;
+    public String getResponse() {
+        return Response;
     }
 
     /**
-     * @return the Rated
+     * @return the totalResults
      */
-    public String getRated() {
-        return Rated;
+    public String getTotalResults() {
+        return totalResults;
     }
 
     /**
-     * @return the Released
+     * @return the Error
      */
-    public String getReleased() {
-        return Released;
+    public String getError() {
+        return Error;
     }
 
     /**
-     * @return the Runtime
+     * @return the Search
      */
-    public String getRuntime() {
-        return Runtime;
+    public IMDbSearchDto[] getSearch() {
+        return Search;
     }
 
     /**
-     * @return the Genre
+     * @param Response the Response to set
      */
-    public String getGenre() {
-        return Genre;
+    public void setResponse(String Response) {
+        this.Response = Response;
     }
 
     /**
-     * @return the Director
+     * @param totalResults the totalResults to set
      */
-    public String getDirector() {
-        return Director;
+    public void setTotalResults(String totalResults) {
+        this.totalResults = totalResults;
     }
 
     /**
-     * @return the Writer
+     * @param Error the Error to set
      */
-    public String getWriter() {
-        return Writer;
+    public void setError(String Error) {
+        this.Error = Error;
     }
 
     /**
-     * @return the Actors
+     * @param Search the Search to set
      */
-    public String getActors() {
-        return Actors;
+    public void setSearch(IMDbSearchDto[] Search) {
+        this.Search = Search;
     }
 
-    /**
-     * @return the Plot
-     */
-    public String getPlot() {
-        return Plot;
-    }
-
-    /**
-     * @return the Language
-     */
-    public String getLanguage() {
-        return Language;
-    }
-
-    /**
-     * @return the Country
-     */
-    public String getCountry() {
-        return Country;
-    }
-
-    /**
-     * @return the Poster
-     */
-    public String getPoster() {
-        return Poster;
-    }
-
-    /**
-     * @return the imdbRating
-     */
-    public String getImdbRating() {
-        return imdbRating;
-    }
-
-    /**
-     * @return the imdbVotes
-     */
-    public String getImdbVotes() {
-        return imdbVotes;
-    }
-
-    /**
-     * @return the BoxOffice
-     */
-    public String getBoxOffice() {
-        return BoxOffice;
-    }
-
-    /**
-     * @return the Production
-     */
-    public String getProduction() {
-        return Production;
-    }
-
-    /**
-     * @param Title the Title to set
-     */
-    public void setTitle(String Title) {
-        this.Title = Title;
-    }
-
-    /**
-     * @param Year the Year to set
-     */
-    public void setYear(String Year) {
-        this.Year = Year;
-    }
-
-    /**
-     * @param Rated the Rated to set
-     */
-    public void setRated(String Rated) {
-        this.Rated = Rated;
-    }
-
-    /**
-     * @param Released the Released to set
-     */
-    public void setReleased(String Released) {
-        this.Released = Released;
-    }
-
-    /**
-     * @param Runtime the Runtime to set
-     */
-    public void setRuntime(String Runtime) {
-        this.Runtime = Runtime;
-    }
-
-    /**
-     * @param Genre the Genre to set
-     */
-    public void setGenre(String Genre) {
-        this.Genre = Genre;
-    }
-
-    /**
-     * @param Director the Director to set
-     */
-    public void setDirector(String Director) {
-        this.Director = Director;
-    }
-
-    /**
-     * @param Writer the Writer to set
-     */
-    public void setWriter(String Writer) {
-        this.Writer = Writer;
-    }
-
-    /**
-     * @param Actors the Actors to set
-     */
-    public void setActors(String Actors) {
-        this.Actors = Actors;
-    }
-
-    /**
-     * @param Plot the Plot to set
-     */
-    public void setPlot(String Plot) {
-        this.Plot = Plot;
-    }
-
-    /**
-     * @param Language the Language to set
-     */
-    public void setLanguage(String Language) {
-        this.Language = Language;
-    }
-
-    /**
-     * @param Country the Country to set
-     */
-    public void setCountry(String Country) {
-        this.Country = Country;
-    }
-
-    /**
-     * @param Poster the Poster to set
-     */
-    public void setPoster(String Poster) {
-        this.Poster = Poster;
-    }
-
-    /**
-     * @param imdbRating the imdbRating to set
-     */
-    public void setImdbRating(String imdbRating) {
-        this.imdbRating = imdbRating;
-    }
-
-    /**
-     * @param imdbVotes the imdbVotes to set
-     */
-    public void setImdbVotes(String imdbVotes) {
-        this.imdbVotes = imdbVotes;
-    }
-
-    /**
-     * @param BoxOffice the BoxOffice to set
-     */
-    public void setBoxOffice(String BoxOffice) {
-        this.BoxOffice = BoxOffice;
-    }
-
-    /**
-     * @param Production the Production to set
-     */
-    public void setProduction(String Production) {
-        this.Production = Production;
-    }
 }

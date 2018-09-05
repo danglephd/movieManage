@@ -5,9 +5,6 @@
  */
 package org.vn.movieviewer.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +31,8 @@ import org.vn.movieviewer.renderer.PagingTable;
  * @author danglph
  */
 public class Utils {
-        private static Logger logger = Logger.getLogger(Utils.class);
+
+    private static Logger logger = Logger.getLogger(Utils.class);
 
     public static Properties loadPropertiesFile(String path) {
         try {
@@ -57,7 +55,7 @@ public class Utils {
             return null;
         }
     }
-    
+
     public static InputVerifier fieldYearReleaseVerifier = new InputVerifier() {
         @Override
         public boolean verify(JComponent input) {
@@ -78,7 +76,7 @@ public class Utils {
             return false;
         }
     };
-    
+
     public static void updatePagingView(PagingTable pagingTable, JLabel jLTotalPages, JLabel jLDataFrom, JTextField jTFCurrentPage) {
         jLTotalPages.setText("/" + pagingTable.getTotalPage());
         jTFCurrentPage.setText(pagingTable.getCurentPage() + "");
@@ -88,9 +86,9 @@ public class Utils {
             jLDataFrom.setText("Dữ liệu từ " + (pagingTable.getStart() + 1) + " - " + pagingTable.getLimit() + "/" + pagingTable.getTotalRow());
         }
     }
-    
-    public static void printFolderSize(File file){
-        
+
+    public static void printFolderSize(File file) {
+
         File folder = file;
         File[] arrFile = folder.listFiles();
 
@@ -109,7 +107,7 @@ public class Utils {
         logger.debug("nuber folders ~ " + lstFolder.size());
         logger.debug("number files ~ " + lstFile.size());
     }
-    
+
     private static String viewSize(long size, int div) {
         if (size > 1024) {
             return viewSize(size / 1024, div + 1);
@@ -140,7 +138,7 @@ public class Utils {
         }
         return new ImageIcon(imgPath);
     }
-    
+
     public static ImageIcon getImagePoster(String path) {
         try {
             System.out.println("Get Image from " + path);
@@ -153,18 +151,5 @@ public class Utils {
             return null;
         }
     }
-    
-    public static String object2Json(Object data) {
 
-        Gson gson = new GsonBuilder()
-                .create();
-        return gson.toJson(data);
-    }
-
-    public static <T> T jSon2Object(JsonElement jsonElement, Class<T> enClass) {
-
-        Gson gson = new GsonBuilder()
-                .create();
-        return gson.fromJson(jsonElement, enClass);
-    }
 }
