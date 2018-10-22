@@ -5,8 +5,8 @@
  */
 package org.vn.movieviewer.view.main;
 
-import com.jafregle.Jafregle;
-import com.jafregle.Language;
+//import com.jafregle.Jafregle;
+//import com.jafregle.Language;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
@@ -81,7 +81,7 @@ public class SubtitleCompaireFrm extends javax.swing.JFrame {
     private int[] selectedRows;
     private int[] selectedColumn;
     List<String> lstSaveTrans = null;
-    private Jafregle jafregle = new Jafregle(Language.ENGLISH, Language.VIETNAM);
+//    private Jafregle jafregle = new Jafregle(Language.ENGLISH, Language.VIETNAM);
 //    private GoogleTranslator translator = new GoogleTranslator();
 
     public SubtitleCompaireFrm(JFrame parent, boolean modal) {
